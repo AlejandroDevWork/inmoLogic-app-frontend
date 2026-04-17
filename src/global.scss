@@ -1,0 +1,40 @@
+@use "tailwindcss";
+
+@theme {
+  --color-cream: #FDFCF9;
+  --color-petrol: #1A2E35;
+  --color-petrol-light: #2A4A55;
+  --color-petrol-50: #E8EEF0;
+  --color-earth: #D4A373;
+  --color-earth-light: #E8C9A0;
+  --color-earth-dark: #B8864E;
+  --color-sand: #F5F0E8;
+  --color-sand-dark: #E8DFD0;
+  --color-stone: #8B8680;
+  --color-warm-white: #FFFFFF;
+  --color-warm-border: #F0EBE3;
+
+  --radius-card: 24px;
+  --radius-button: 16px;
+  --radius-badge: 10px;
+}
+
+html {
+  background-color: var(--color-cream);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--color-petrol);
+  background-color: var(--color-cream);
+  -webkit-font-smoothing: antialiased;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

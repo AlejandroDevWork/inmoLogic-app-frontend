@@ -1,0 +1,7 @@
+{
+  "name": "inmoLogic-app-frontend",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
