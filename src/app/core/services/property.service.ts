@@ -285,6 +285,7 @@ export class PropertyService {
       // Contacto vinculado a Raíces Bilbao (1º)
       this.addContact({
         nombre: 'Aitor Etxebarria',
+        tipo: 'gestor',
         telefono: '644778899',
         whatsapp: '644778899',
         email: 'aitor@raicesbilbao.es',
@@ -298,6 +299,7 @@ export class PropertyService {
       // Contacto vinculado a Raíces Bilbao (2º)
       this.addContact({
         nombre: 'Leire Goikoetxea',
+        tipo: 'pintor',
         telefono: '655889900',
         email: 'leire@raicesbilbao.es',
         desplazamiento: 'moto',
@@ -310,6 +312,7 @@ export class PropertyService {
       // Contacto vinculado a Raíces Bilbao (3º)
       this.addContact({
         nombre: 'Unai Mendizabal',
+        tipo: 'fontanero',
         telefono: '611990011',
         whatsapp: '611990011',
         desplazamiento: 'otros',
@@ -320,6 +323,7 @@ export class PropertyService {
       // Contacto vinculado a Sol y Piso Málaga (1º)
       this.addContact({
         nombre: 'Antonio Serrano',
+        tipo: 'constructor',
         telefono: '622112233',
         whatsapp: '622112233',
         email: 'antonio@solypiso.es',
@@ -332,6 +336,7 @@ export class PropertyService {
       // Contacto vinculado a Sol y Piso Málaga (2º)
       this.addContact({
         nombre: 'Carmen Delgado',
+        tipo: 'gestor',
         telefono: '633223344',
         email: 'carmen@solypiso.es',
         desplazamiento: 'coche',
@@ -344,6 +349,7 @@ export class PropertyService {
       // Contacto vinculado a Norte Inmuebles Zaragoza
       this.addContact({
         nombre: 'Rosa Murillo',
+        tipo: 'portero',
         telefono: '676543210',
         email: 'rosa@norteinmuebles.es',
         desplazamiento: 'coche',
@@ -355,6 +361,7 @@ export class PropertyService {
       // Contacto independiente (sin agencia)
       this.addContact({
         nombre: 'Fernando Ortiz',
+        tipo: 'electricista',
         telefono: '699112233',
         whatsapp: '699112233',
         desplazamiento: 'coche',
@@ -365,6 +372,7 @@ export class PropertyService {
       // Contacto independiente (sin agencia)
       this.addContact({
         nombre: 'Elena Ruiz',
+        tipo: 'abogado',
         telefono: '688334455',
         email: 'elena.ruiz@email.com',
         desplazamiento: 'moto',

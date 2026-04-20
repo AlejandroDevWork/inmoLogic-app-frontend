@@ -56,6 +56,14 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
       <!-- Active filter pills -->
       @if (hasActiveFilters()) {
         <div class="flex flex-wrap gap-1.5">
+          @if (filtroTipo() !== 'todas') {
+            <button (click)="filtroTipo.set('todas')"
+              class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
+                     bg-petrol text-white">
+              {{ getTipoLabel(filtroTipo()) }}
+              <lucide-icon [img]="iconX" [size]="10"></lucide-icon>
+            </button>
+          }
           @if (filtroDesplazamiento() !== 'todas') {
             <button (click)="filtroDesplazamiento.set('todas')"
               class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
@@ -96,6 +104,11 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-2 mb-0.5">
                     <h3 class="text-sm font-semibold text-petrol truncate">{{ contact.nombre }}</h3>
+                    @if (contact.tipo) {
+                      <span class="text-[10px] font-medium px-2 py-0.5 rounded-lg bg-earth-light/25 text-earth-dark">
+                        {{ getTipoLabel(contact.tipo) }}
+                      </span>
+                    }
                     @if (contact.desplazamiento) {
                       <span class="text-[10px] font-medium px-2 py-0.5 rounded-lg bg-cream text-stone">
                         {{ getDesplazamientoLabel(contact.desplazamiento) }}
@@ -183,16 +196,32 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
           </div>
 
           <div class="p-5 space-y-5">
+            <!-- Tipo -->
+            <div>
+              <label class="text-xs text-petrol font-semibold mb-2 block">Tipo de contacto</label>
+              <div class="flex flex-wrap gap-1.5">
+                @for (chip of filtroTipoChips; track chip.key) {
+                  <button (click)="filtroTipo.set(chip.key)"
+                    class="px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all duration-200"
+                    [class]="filtroTipo() === chip.key
+                      ? 'bg-petrol text-white'
+                      : 'bg-white text-petrol border border-warm-border hover:bg-sand/40'">
+                    {{ chip.label }}
+                  </button>
+                }
+              </div>
+            </div>
+
             <!-- Desplazamiento -->
             <div>
-              <label class="text-[10px] text-stone font-medium uppercase tracking-wide mb-2 block">Desplazamiento</label>
+              <label class="text-xs text-petrol font-semibold mb-2 block">Desplazamiento</label>
               <div class="flex flex-wrap gap-1.5">
                 @for (chip of filtroDesplazamientoChips; track chip.key) {
                   <button (click)="filtroDesplazamiento.set(chip.key)"
-                    class="px-3 py-1.5 rounded-[10px] text-[11px] font-medium transition-all duration-200"
+                    class="px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all duration-200"
                     [class]="filtroDesplazamiento() === chip.key
                       ? 'bg-petrol text-white'
-                      : 'bg-cream text-stone hover:bg-sand/60'">
+                      : 'bg-white text-petrol border border-warm-border hover:bg-sand/40'">
                     {{ chip.label }}
                   </button>
                 }
@@ -202,7 +231,7 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
             <!-- Agencia -->
             @if (agencies().length > 0) {
               <div>
-                <label class="text-[10px] text-stone font-medium uppercase tracking-wide mb-2 block">Agencia</label>
+                <label class="text-xs text-petrol font-semibold mb-2 block">Agencia</label>
                 <app-dropdown [options]="agenciaFilterOptions()" [placeholder]="filtroAgenciaLabel()"
                   (selectedChange)="onAgenciaFilterSelected($event)"></app-dropdown>
               </div>
@@ -251,6 +280,13 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
                        text-sm text-petrol placeholder:text-stone/30
                        border border-warm-border focus:border-earth
                        focus:outline-none transition-colors" />
+            </div>
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Tipo</label>
+              <div class="mt-1">
+                <app-dropdown [options]="tipoOptions" placeholder="Sin tipo"
+                  (selectedChange)="newTipo.set($event)"></app-dropdown>
+              </div>
             </div>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
               <div>
@@ -349,8 +385,23 @@ export class ContactsPage {
 
   // Search & Filters
   searchTerm = signal('');
+  filtroTipo = signal('todas');
   filtroDesplazamiento = signal('todas');
   filtroAgencia = signal('todas');
+
+  filtroTipoChips = [
+    { key: 'todas', label: 'Todos' },
+    { key: 'fontanero', label: 'Fontanero' },
+    { key: 'constructor', label: 'Constructor' },
+    { key: 'abogado', label: 'Abogado' },
+    { key: 'portero', label: 'Portero' },
+    { key: 'notario', label: 'Notario' },
+    { key: 'electricista', label: 'Electricista' },
+    { key: 'pintor', label: 'Pintor' },
+    { key: 'arquitecto', label: 'Arquitecto' },
+    { key: 'gestor', label: 'Gestor' },
+    { key: 'otro', label: 'Otro' },
+  ];
 
   filtroDesplazamientoChips = [
     { key: 'todas', label: 'Todos' },
@@ -360,6 +411,7 @@ export class ContactsPage {
   ];
 
   hasActiveFilters = computed(() =>
+    this.filtroTipo() !== 'todas' ||
     this.filtroDesplazamiento() !== 'todas' ||
     this.filtroAgencia() !== 'todas'
   );
@@ -376,6 +428,12 @@ export class ContactsPage {
         (c.email && c.email.toLowerCase().includes(term)) ||
         (c.notas && c.notas.toLowerCase().includes(term))
       );
+    }
+
+    // Filter by tipo
+    const tipo = this.filtroTipo();
+    if (tipo !== 'todas') {
+      result = result.filter(c => c.tipo === tipo);
     }
 
     // Filter by desplazamiento
@@ -413,6 +471,7 @@ export class ContactsPage {
   showAddModal = signal(false);
   showFilterModal = signal(false);
   newNombre = '';
+  newTipo = signal<string | null>(null);
   newTelefono = '';
   newEmail = '';
   newWhatsapp = '';
@@ -421,6 +480,7 @@ export class ContactsPage {
   newNotasCafe = '';
   newNotas = '';
 
+  tipoOptions = ['Fontanero', 'Constructor', 'Abogado', 'Portero', 'Notario', 'Electricista', 'Pintor', 'Arquitecto', 'Gestor', 'Otro'];
   desplazamientoOptions = ['Coche', 'Moto', 'Otros'];
 
   iconUsers = Users;
@@ -449,8 +509,14 @@ export class ContactsPage {
   }
 
   clearFilters(): void {
+    this.filtroTipo.set('todas');
     this.filtroDesplazamiento.set('todas');
     this.filtroAgencia.set('todas');
+  }
+
+  getTipoLabel(tipo: string): string {
+    const chip = this.filtroTipoChips.find(c => c.key === tipo);
+    return chip?.label ?? tipo;
   }
 
   onAgenciaFilterSelected(label: string): void {
@@ -470,12 +536,26 @@ export class ContactsPage {
       'Otros': 'otros'
     };
 
+    const tipoMap: Record<string, string> = {
+      'Fontanero': 'fontanero',
+      'Constructor': 'constructor',
+      'Abogado': 'abogado',
+      'Portero': 'portero',
+      'Notario': 'notario',
+      'Electricista': 'electricista',
+      'Pintor': 'pintor',
+      'Arquitecto': 'arquitecto',
+      'Gestor': 'gestor',
+      'Otro': 'otro'
+    };
+
     const agency = this.newAgencyId()
       ? this.agencies().find(a => a.nombre === this.newAgencyId())
       : null;
 
     this.propertyService.addContact({
       nombre: this.newNombre.trim(),
+      tipo: (tipoMap[this.newTipo() || ''] || undefined) as any,
       telefono: this.newTelefono.trim() || undefined,
       email: this.newEmail.trim() || undefined,
       whatsapp: this.newWhatsapp.trim() || undefined,
@@ -486,6 +566,7 @@ export class ContactsPage {
     });
 
     this.newNombre = '';
+    this.newTipo.set(null);
     this.newTelefono = '';
     this.newEmail = '';
     this.newWhatsapp = '';

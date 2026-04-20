@@ -122,14 +122,9 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
           <div>
             <div class="flex items-center justify-between mb-3">
               <h2 class="text-sm font-semibold text-petrol">Agencias</h2>
-              <select [value]="pageSize()"
-                      (change)="onPageSizeChange($any($event.target).value)"
-                      class="text-[11px] text-stone bg-white border border-warm-border rounded-[8px] px-2 py-1
-                             focus:outline-none focus:border-earth">
-                @for (size of [5, 10, 15, 20, 25]; track size) {
-                  <option [value]="size">{{ size }}</option>
-                }
-              </select>
+              <app-dropdown [options]="pageSizeOptions" [placeholder]="pageSizeLabel()"
+                (selectedChange)="onPageSizeChange($event)"
+                class="w-20"></app-dropdown>
             </div>
             <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
               @for (agency of paginatedAgencies(); track agency.id) {
@@ -496,6 +491,9 @@ export class AgenciesPage {
   pageSize = signal(5);
   currentPage = signal(1);
 
+  pageSizeOptions = ['5', '10', '15', '20', '25'];
+  pageSizeLabel = computed(() => String(this.pageSize()));
+
   filtroRelacionChips = [
     { key: 'todas', label: 'Todas' },
     { key: 'partner-preferente', label: 'Partner' },
@@ -681,8 +679,8 @@ export class AgenciesPage {
     if (opt) this.filtroOrden.set(opt.key);
   }
 
-  onPageSizeChange(val: string): void {
-    const size = parseInt(val, 10);
+  onPageSizeChange(label: string): void {
+    const size = parseInt(label, 10);
     if (!isNaN(size)) {
       this.pageSize.set(size);
       this.currentPage.set(1);
