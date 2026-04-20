@@ -44,7 +44,7 @@ export class StatusBadgeComponent {
     const map: Record<PropertyEstado, string> = {
       'analisis': 'bg-petrol-50 text-petrol',
       'visita': 'bg-earth-light/40 text-earth-dark',
-      'oferta': 'bg-blue-100 text-blue-800',
+      'oferta': 'bg-petrol-50 text-petrol-light',
       'arras': 'bg-amber-100 text-amber-800',
       'alquilado': 'bg-emerald-100 text-emerald-800'
     };

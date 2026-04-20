@@ -19,12 +19,8 @@ import { LucideAngularModule, Home, TrendingUp, Wallet, Building2, Phone, Bell, 
 
           <!-- Header: Avatar + Saludo -->
           <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-full bg-earth/20 flex items-center justify-center">
-              <span class="text-earth font-bold text-lg">A</span>
-            </div>
             <div>
-              <h1 class="text-xl font-bold text-petrol">Buenos días, Alejandro</h1>
-              <p class="text-xs text-stone mt-0.5">Tu cartera inmobiliaria al detalle</p>
+              <h1 class="text-xl font-bold text-petrol">Dashboard</h1>
             </div>
           </div>
 

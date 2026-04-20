@@ -25,7 +25,6 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
           <div class="flex items-center justify-between">
             <div>
               <h1 class="text-xl font-bold text-petrol">Agencias</h1>
-              <p class="text-xs text-stone mt-1">CRM de contactos y relaciones</p>
             </div>
             <div class="flex items-center gap-2">
               @if (agenciesConCoords().length > 0) {

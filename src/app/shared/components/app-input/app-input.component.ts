@@ -27,7 +27,7 @@ export type InputType =
   template: `
     <div class="relative w-full">
       <!-- Label -->
-      <label [for]="inputId" class="block text-sm font-medium text-slate-700 mb-1.5">
+      <label [for]="inputId" class="block text-sm font-medium text-petrol mb-1.5">
         {{ label }}
         @if (required) {
           <span class="text-red-500">*</span>
@@ -47,25 +47,25 @@ export type InputType =
           w-full
           px-4
           py-2.5
-          text-slate-900
+          text-petrol
           bg-white
           border
           rounded-xl
           outline-none
           transition-all
           duration-200
-          disabled:bg-slate-100
-          disabled:text-slate-500
+          disabled:bg-cream
+          disabled:text-stone
           disabled:cursor-not-allowed
-          placeholder-slate-400
+          placeholder:text-stone/50
         "
-        [class.border-slate-200]="!isFocused && !hasError"
-        [class.border-blue-950]="isFocused && !hasError"
+        [class.border-warm-border]="!isFocused && !hasError"
+        [class.border-petrol]="isFocused && !hasError"
         [class.border-red-500]="hasError"
         [class.ring-2]="isFocused || hasError"
-        [class.ring-blue-950/10]="isFocused && !hasError"
+        [class.ring-petrol/10]="isFocused && !hasError"
         [class.ring-red-500/10]="hasError"
-        [class.bg-slate-50]="disabled"
+        [class.bg-sand]="disabled"
         [disabled]="disabled"
         [readonly]="readonly"
         [min]="min"
@@ -93,7 +93,7 @@ export type InputType =
 
       <!-- Helper Text -->
       @if (helperText && !hasError) {
-        <p class="mt-1.5 text-xs text-slate-500">{{ helperText }}</p>
+        <p class="mt-1.5 text-xs text-stone">{{ helperText }}</p>
       }
     </div>
   `,

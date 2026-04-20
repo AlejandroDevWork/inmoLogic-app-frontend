@@ -32,8 +32,8 @@ import { LucideAngularModule, ChevronDown, ChevronRight, Pencil } from 'lucide-a
         <!-- Progress ring -->
         <div class="relative w-9 h-9">
           <svg class="w-9 h-9 -rotate-90" viewBox="0 0 36 36">
-            <circle cx="18" cy="18" r="14" fill="none" stroke="#F0EBE3" stroke-width="3" />
-            <circle cx="18" cy="18" r="14" fill="none" stroke="#D4A373" stroke-width="3"
+            <circle cx="18" cy="18" r="14" fill="none" stroke="#E2E8F0" stroke-width="3" />
+            <circle cx="18" cy="18" r="14" fill="none" stroke="#3B82F6" stroke-width="3"
                     [attr.stroke-dasharray]="circumference"
                     [attr.stroke-dashoffset]="dashOffset"
                     stroke-linecap="round"

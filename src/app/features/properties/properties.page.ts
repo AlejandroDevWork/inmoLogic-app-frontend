@@ -19,7 +19,6 @@ import { LucideAngularModule, Building2, Search, SlidersHorizontal } from 'lucid
           <!-- Header -->
           <div>
             <h1 class="text-xl font-bold text-petrol">Propiedades</h1>
-            <p class="text-xs text-stone mt-1">Tu cartera inmobiliaria</p>
           </div>
 
           <!-- Search bar -->

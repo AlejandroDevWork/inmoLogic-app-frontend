@@ -66,8 +66,8 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
       <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-slate-900">Análisis de Inversión</h1>
-          <p class="text-sm text-slate-500 mt-1">Calculadora financiera y checklist técnico</p>
+          <h1 class="text-2xl font-bold text-petrol">Análisis de Inversión</h1>
+          <p class="text-sm text-stone mt-1">Calculadora financiera y checklist técnico</p>
         </div>
         <app-button
           label="Guardar Análisis"
@@ -81,15 +81,15 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
         <!-- Inversión Total -->
         <app-card padding="md" shadow="sm">
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-blue-950/10 rounded-lg">
-              <svg class="w-5 h-5 text-blue-950" fill="currentColor" viewBox="0 0 20 20">
+            <div class="p-2.5 bg-petrol/10 rounded-lg">
+              <svg class="w-5 h-5 text-petrol" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.312-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.312.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
               </svg>
             </div>
             <div>
-              <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Inversión Total</p>
-              <p class="text-xl font-bold text-slate-900">{{ formatCurrency(totalInvestment()) }}</p>
+              <p class="text-xs font-medium text-stone uppercase tracking-wide">Inversión Total</p>
+              <p class="text-xl font-bold text-petrol">{{ formatCurrency(totalInvestment()) }}</p>
             </div>
           </div>
         </app-card>
@@ -103,7 +103,7 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
               </svg>
             </div>
             <div>
-              <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Rentabilidad Neta</p>
+              <p class="text-xs font-medium text-stone uppercase tracking-wide">Rentabilidad Neta</p>
               <p class="text-xl font-bold" [class]="getTextColor()">{{ netYield().toFixed(2) }}%</p>
             </div>
           </div>
@@ -118,7 +118,7 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
               </svg>
             </div>
             <div>
-              <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Cashflow Mensual</p>
+              <p class="text-xs font-medium text-stone uppercase tracking-wide">Cashflow Mensual</p>
               <p class="text-xl font-bold" [class]="getCashflowColor()">{{ formatCurrency(cashflow()) }}</p>
             </div>
           </div>
@@ -169,8 +169,8 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
             />
 
             <!-- Gastos Fijos -->
-            <div class="pt-4 border-t border-slate-100">
-              <h4 class="text-sm font-semibold text-slate-700 mb-3">Gastos Fijos Mensuales</h4>
+            <div class="pt-4 border-t border-warm-border">
+              <h4 class="text-sm font-semibold text-petrol mb-3">Gastos Fijos Mensuales</h4>
               <div class="grid grid-cols-3 gap-4">
                 <app-input
                   label="Comunidad"
@@ -192,8 +192,8 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
             </div>
 
             <!-- Hipoteca (opcional) -->
-            <div class="pt-4 border-t border-slate-100">
-              <h4 class="text-sm font-semibold text-slate-700 mb-3">Financiación (opcional)</h4>
+            <div class="pt-4 border-t border-warm-border">
+              <h4 class="text-sm font-semibold text-petrol mb-3">Financiación (opcional)</h4>
               <div formGroupName="hipoteca" class="grid grid-cols-3 gap-4">
                 <app-input
                   label="Entrada (%)"
@@ -217,16 +217,16 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
 
         <!-- Checklist Técnico -->
         <app-card title="Checklist Técnico" subtitle="Evalúa el estado del inmueble" padding="none">
-          <div class="divide-y divide-slate-100">
+          <div class="divide-y divide-warm-border">
             @for (categoria of categorias; track categoria.key) {
               <div class="p-4">
-                <h4 class="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wide">
+                <h4 class="text-sm font-semibold text-petrol mb-3 uppercase tracking-wide">
                   {{ categoria.nombre }}
                 </h4>
                 <div class="space-y-3">
                   @for (item of getChecklistItems(categoria.key); track item.id) {
                     <div class="flex items-start gap-3">
-                      <span class="text-sm text-slate-600 flex-1">{{ item.nombre }}</span>
+                      <span class="text-sm text-stone flex-1">{{ item.nombre }}</span>
                       <div class="flex items-center gap-1">
                         <!-- Radio: Bien -->
                         <label class="flex items-center gap-1.5 cursor-pointer">
@@ -273,7 +273,7 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
                         [placeholder]="'Notas para ' + item.nombre"
                         (input)="updateChecklistNotas(categoria.key, item.id, $event)"
                         [value]="item.notas || ''"
-                        class="ml-8 mt-1.5 w-full px-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-blue-950 focus:ring-1 focus:ring-blue-950"
+                        class="ml-8 mt-1.5 w-full px-3 py-1.5 text-sm bg-sand border border-warm-border rounded-md focus:outline-none focus:border-petrol focus:ring-1 focus:ring-petrol"
                       />
                     }
                   }
@@ -288,44 +288,44 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
       <app-card title="Desglose de Métricas" padding="md">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-3">
-            <h4 class="text-sm font-semibold text-slate-700">Inversión Detallada</h4>
+            <h4 class="text-sm font-semibold text-petrol">Inversión Detallada</h4>
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
-                <span class="text-slate-600">Precio de compra</span>
-                <span class="font-medium text-slate-900">{{ formatCurrency(financialForm.get('precioCompra')?.value || 0) }}</span>
+                <span class="text-stone">Precio de compra</span>
+                <span class="font-medium text-petrol">{{ formatCurrency(financialForm.get('precioCompra')?.value || 0) }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-600">ITP ({{ financialForm.get('itp')?.value || 0 }}%)</span>
-                <span class="font-medium text-slate-900">{{ formatCurrency(calculateITP()) }}</span>
+                <span class="text-stone">ITP ({{ financialForm.get('itp')?.value || 0 }}%)</span>
+                <span class="font-medium text-petrol">{{ formatCurrency(calculateITP()) }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-600">Notaría/Gestoría</span>
-                <span class="font-medium text-slate-900">{{ formatCurrency(financialForm.get('notariaGestoria')?.value || 0) }}</span>
+                <span class="text-stone">Notaría/Gestoría</span>
+                <span class="font-medium text-petrol">{{ formatCurrency(financialForm.get('notariaGestoria')?.value || 0) }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-600">Reforma</span>
-                <span class="font-medium text-slate-900">{{ formatCurrency(financialForm.get('reforma')?.value || 0) }}</span>
+                <span class="text-stone">Reforma</span>
+                <span class="font-medium text-petrol">{{ formatCurrency(financialForm.get('reforma')?.value || 0) }}</span>
               </div>
-              <div class="flex justify-between pt-2 border-t border-slate-200 font-semibold">
-                <span class="text-slate-900">Total Inversión</span>
-                <span class="text-blue-950">{{ formatCurrency(totalInvestment()) }}</span>
+              <div class="flex justify-between pt-2 border-t border-warm-border font-semibold">
+                <span class="text-petrol">Total Inversión</span>
+                <span class="text-petrol">{{ formatCurrency(totalInvestment()) }}</span>
               </div>
             </div>
           </div>
 
           <div class="space-y-3">
-            <h4 class="text-sm font-semibold text-slate-700">Proyección Anual</h4>
+            <h4 class="text-sm font-semibold text-petrol">Proyección Anual</h4>
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
-                <span class="text-slate-600">Ingresos por alquiler (12 meses)</span>
+                <span class="text-stone">Ingresos por alquiler (12 meses)</span>
                 <span class="font-medium text-green-700">+{{ formatCurrency((financialForm.get('alquilerEstimado')?.value || 0) * 12) }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-600">Gastos fijos anuales</span>
+                <span class="text-stone">Gastos fijos anuales</span>
                 <span class="font-medium text-red-700">-{{ formatCurrency(gastosAnuales()) }}</span>
               </div>
-              <div class="flex justify-between pt-2 border-t border-slate-200 font-semibold">
-                <span class="text-slate-900">Beneficio Neto Anual</span>
+              <div class="flex justify-between pt-2 border-t border-warm-border font-semibold">
+                <span class="text-petrol">Beneficio Neto Anual</span>
                 <span [class]="getBeneficioColor()">{{ formatCurrency(beneficioNetoAnual()) }}</span>
               </div>
             </div>
@@ -506,7 +506,7 @@ export class PropertyAnalysisComponent implements OnInit {
   }
 
   getTextColor(): string {
-    return 'text-slate-900';
+    return 'text-petrol';
   }
 
   formatCurrency(amount: number): string {

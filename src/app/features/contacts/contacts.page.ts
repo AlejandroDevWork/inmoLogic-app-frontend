@@ -2,7 +2,6 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PropertyService } from '../../core/services/property.service';
-import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 import { AppDropdownComponent } from '../../shared/components/app-dropdown/app-dropdown.component';
 import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee, MapPin, Search, SlidersHorizontal } from 'lucide-angular';
 
@@ -12,7 +11,6 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
   imports: [
     CommonModule,
     FormsModule,
-    StatusBadgeComponent,
     AppDropdownComponent,
     LucideAngularModule
   ],
@@ -23,7 +21,6 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-xl font-bold text-petrol">Contactos</h1>
-          <p class="text-xs text-stone mt-1">Tu red de contactos inmobiliarios</p>
         </div>
         <button (click)="showAddModal.set(true)"
           class="w-10 h-10 rounded-[14px] bg-earth flex items-center justify-center

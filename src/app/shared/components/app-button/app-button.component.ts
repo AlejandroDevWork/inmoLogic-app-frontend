@@ -180,16 +180,16 @@ export class AppButtonComponent {
 
     const variantClasses: Record<ButtonVariant, string> = {
       primary: `
-        bg-blue-950 text-white
-        hover:bg-blue-900
-        focus:ring-blue-950
+        bg-petrol text-white
+        hover:bg-petrol-light
+        focus:ring-petrol
         border border-transparent
       `,
       secondary: `
-        bg-white text-blue-950
-        hover:bg-slate-50
-        focus:ring-blue-950
-        border border-slate-300
+        bg-warm-white text-petrol
+        hover:bg-sand
+        focus:ring-petrol
+        border border-warm-border
       `,
       danger: `
         bg-red-600 text-white
@@ -198,9 +198,9 @@ export class AppButtonComponent {
         border border-transparent
       `,
       ghost: `
-        bg-transparent text-slate-700
-        hover:bg-slate-100
-        focus:ring-slate-500
+        bg-transparent text-stone
+        hover:bg-cream
+        focus:ring-stone
         border border-transparent
       `
     };
@@ -222,9 +222,9 @@ export class AppButtonComponent {
   get iconClasses(): string {
     const colorClasses: Record<ButtonVariant, string> = {
       primary: 'text-white',
-      secondary: 'text-blue-950',
+      secondary: 'text-petrol',
       danger: 'text-white',
-      ghost: 'text-slate-700'
+      ghost: 'text-stone'
     };
     return colorClasses[this.variant];
   }

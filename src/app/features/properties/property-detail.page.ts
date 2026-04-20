@@ -85,7 +85,7 @@ import { LucideAngularModule, ArrowLeft, Calculator, Wrench, Landmark, FileText 
                   <label class="block text-[10px] text-stone font-medium uppercase tracking-wide mb-1">Ascensor</label>
                   <button (click)="updatePropertyDataBool('ascensor', !property()!.propertyData?.ascensor)"
                           class="w-full rounded-[14px] px-3 py-2 text-sm font-medium transition-colors text-left"
-                          [class]="property()!.propertyData?.ascensor ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-stone-50 text-stone border border-stone-200'">
+                          [class]="property()!.propertyData?.ascensor ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-sand text-stone border border-warm-border'">
                     {{ property()!.propertyData?.ascensor ? 'Sí' : 'No' }}
                   </button>
                 </div>
@@ -116,7 +116,7 @@ import { LucideAngularModule, ArrowLeft, Calculator, Wrench, Landmark, FileText 
                   <label class="block text-[10px] text-stone font-medium uppercase tracking-wide mb-1">Terraza/Balcón</label>
                   <button (click)="updatePropertyDataBool('terrazaBalcon', !property()!.propertyData?.terrazaBalcon)"
                           class="w-full rounded-[14px] px-3 py-2 text-sm font-medium transition-colors text-left"
-                          [class]="property()!.propertyData?.terrazaBalcon ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-stone-50 text-stone border border-stone-200'">
+                          [class]="property()!.propertyData?.terrazaBalcon ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-sand text-stone border border-warm-border'">
                     {{ property()!.propertyData?.terrazaBalcon ? 'Sí' : 'No' }}
                   </button>
                 </div>
@@ -124,7 +124,7 @@ import { LucideAngularModule, ArrowLeft, Calculator, Wrench, Landmark, FileText 
                   <label class="block text-[10px] text-stone font-medium uppercase tracking-wide mb-1">Parking/Trastero</label>
                   <button (click)="updatePropertyDataBool('parkingTrastero', !property()!.propertyData?.parkingTrastero)"
                           class="w-full rounded-[14px] px-3 py-2 text-sm font-medium transition-colors text-left"
-                          [class]="property()!.propertyData?.parkingTrastero ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-stone-50 text-stone border border-stone-200'">
+                          [class]="property()!.propertyData?.parkingTrastero ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-sand text-stone border border-warm-border'">
                     {{ property()!.propertyData?.parkingTrastero ? 'Sí' : 'No' }}
                   </button>
                 </div>
@@ -171,7 +171,7 @@ import { LucideAngularModule, ArrowLeft, Calculator, Wrench, Landmark, FileText 
                   <label class="block text-[10px] text-stone font-medium uppercase tracking-wide mb-1">Precio Rebajado</label>
                   <button (click)="updateAdDataBool('precioRebajado', !property()!.adData?.precioRebajado)"
                           class="w-full rounded-[14px] px-3 py-2 text-sm font-medium transition-colors text-left"
-                          [class]="property()!.adData?.precioRebajado ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-stone-50 text-stone border border-stone-200'">
+                          [class]="property()!.adData?.precioRebajado ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-sand text-stone border border-warm-border'">
                     {{ property()!.adData?.precioRebajado ? 'Sí' : 'No' }}
                   </button>
                 </div>
@@ -976,7 +976,7 @@ export class PropertyDetailPage {
   statusColor = computed(() => {
     const estado = this.property()?.estado;
     const colors: Record<string, string> = {
-      analisis: 'text-amber-600', visita: 'text-blue-600', oferta: 'text-purple-600', arras: 'text-orange-600', alquilado: 'text-emerald-600'
+      analisis: 'text-amber-600', visita: 'text-earth', oferta: 'text-purple-600', arras: 'text-orange-600', alquilado: 'text-emerald-600'
     };
     return colors[estado || ''] || 'text-stone';
   });
@@ -986,12 +986,12 @@ export class PropertyDetailPage {
     const base = 'px-2 py-0.5 rounded-[10px] text-[10px] font-semibold uppercase tracking-wide';
     const colors: Record<string, string> = {
       analisis: `${base} bg-amber-100 text-amber-700`,
-      visita: `${base} bg-blue-100 text-blue-700`,
+      visita: `${base} bg-petrol-50 text-earth-dark`,
       oferta: `${base} bg-purple-100 text-purple-700`,
       arras: `${base} bg-orange-100 text-orange-700`,
       alquilado: `${base} bg-emerald-100 text-emerald-700`,
     };
-    return colors[estado || ''] || `${base} bg-stone-100 text-stone`;
+    return colors[estado || ''] || `${base} bg-cream text-stone`;
   });
 
   targetYieldPct = computed(() => this.e.targetYield() * 100);

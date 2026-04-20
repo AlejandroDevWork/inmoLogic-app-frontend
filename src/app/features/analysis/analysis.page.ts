@@ -19,14 +19,14 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, AppCardComponent, AppInputComponent, AppButtonComponent],
   template: `
-    <div class="bg-slate-50 min-h-full overflow-y-auto p-4">
+    <div class="bg-cream min-h-full overflow-y-auto p-4">
       <div class="max-w-6xl mx-auto space-y-6 pb-24 lg:pb-6">
 
         <!-- Header -->
         <div class="flex items-center justify-between pt-4">
           <div>
-            <h1 class="text-2xl font-bold text-slate-900">Análisis de Inversión</h1>
-            <p class="text-sm text-slate-500 mt-0.5">Calculadora financiera y checklist técnico</p>
+            <h1 class="text-2xl font-bold text-petrol">Análisis de Inversión</h1>
+            <p class="text-sm text-stone mt-0.5">Calculadora financiera y checklist técnico</p>
           </div>
         </div>
 
@@ -35,15 +35,15 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
           <!-- Inversión Total -->
           <app-card padding="md" shadow="sm">
             <div class="flex items-center gap-3">
-              <div class="p-2.5 bg-blue-950/10 rounded-xl">
-                <svg class="w-5 h-5 text-blue-950" fill="currentColor" viewBox="0 0 20 20">
+              <div class="p-2.5 bg-petrol/10 rounded-xl">
+                <svg class="w-5 h-5 text-petrol" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.312-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.312.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Inversión Total</p>
-                <p class="text-xl font-bold text-slate-900">{{ formatCurrency(totalInvestment()) }}</p>
+                <p class="text-xs font-medium text-stone uppercase tracking-wide">Inversión Total</p>
+                <p class="text-xl font-bold text-petrol">{{ formatCurrency(totalInvestment()) }}</p>
               </div>
             </div>
           </app-card>
@@ -52,13 +52,13 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
           <app-card padding="md" shadow="sm">
             <div class="flex items-center gap-3">
               <div class="p-2.5 rounded-xl" [class]="getYieldColor()">
-                <svg class="w-5 h-5 text-slate-900" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-5 h-5 text-petrol" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Rentabilidad Neta</p>
-                <p class="text-xl font-bold text-slate-900">{{ netYield().toFixed(2) }}%</p>
+                <p class="text-xs font-medium text-stone uppercase tracking-wide">Rentabilidad Neta</p>
+                <p class="text-xl font-bold text-petrol">{{ netYield().toFixed(2) }}%</p>
               </div>
             </div>
           </app-card>
@@ -67,14 +67,14 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
           <app-card padding="md" shadow="sm">
             <div class="flex items-center gap-3">
               <div class="p-2.5 rounded-xl" [class]="getCashflowColor()">
-                <svg class="w-5 h-5 text-slate-900" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-5 h-5 text-petrol" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Cashflow</p>
+                <p class="text-xs font-medium text-stone uppercase tracking-wide">Cashflow</p>
                 <p class="text-xl font-bold" [class]="getCashflowTextColor()">{{ formatCurrency(cashflow()) }}</p>
-                <p class="text-xs text-slate-400">/mes</p>
+                <p class="text-xs text-stone/50">/mes</p>
               </div>
             </div>
           </app-card>
@@ -97,8 +97,8 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
 
               <app-input label="Alquiler Mensual Estimado" type="number" formControlName="alquilerEstimado" />
 
-              <div class="pt-4 border-t border-slate-100">
-                <h4 class="text-sm font-semibold text-slate-700 mb-3">Gastos Fijos</h4>
+              <div class="pt-4 border-t border-warm-border">
+                <h4 class="text-sm font-semibold text-petrol mb-3">Gastos Fijos</h4>
                 <div class="grid grid-cols-3 gap-4">
                   <app-input label="Comunidad" type="number" formControlName="comunidad" />
                   <app-input label="IBI (mensual)" type="number" formControlName="ibi" />
@@ -106,8 +106,8 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
                 </div>
               </div>
 
-              <div class="pt-4 border-t border-slate-100">
-                <h4 class="text-sm font-semibold text-slate-700 mb-3">Financiación (opcional)</h4>
+              <div class="pt-4 border-t border-warm-border">
+                <h4 class="text-sm font-semibold text-petrol mb-3">Financiación (opcional)</h4>
                 <div formGroupName="hipoteca" class="grid grid-cols-3 gap-4">
                   <app-input label="Entrada (%)" type="number" formControlName="porcentajeEntrada" />
                   <app-input label="Interés (%)" type="number" formControlName="tipoInteres" />
@@ -119,14 +119,14 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
 
           <!-- Checklist Técnico -->
           <app-card title="Checklist Técnico" padding="none">
-            <div class="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+            <div class="divide-y divide-warm-border max-h-[600px] overflow-y-auto">
               @for (categoria of categorias; track categoria.key) {
                 <div class="p-4">
-                  <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">{{ categoria.nombre }}</h4>
+                  <h4 class="text-xs font-semibold text-stone uppercase tracking-wide mb-3">{{ categoria.nombre }}</h4>
                   <div class="space-y-3">
                     @for (item of getChecklistItems(categoria.key); track item.id) {
                       <div class="flex items-center justify-between">
-                        <span class="text-sm text-slate-700">{{ item.nombre }}</span>
+                        <span class="text-sm text-petrol">{{ item.nombre }}</span>
                         <div class="flex items-center gap-2">
                           @for (estado of ['bien', 'mal', 'reparar']; track estado) {
                             <label class="flex items-center gap-1 cursor-pointer">
@@ -150,7 +150,7 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
                           [placeholder]="'Notas: ' + item.nombre"
                           (input)="updateChecklistNotas(categoria.key, item.id, $event)"
                           [value]="item.notas || ''"
-                          class="ml-8 mt-1.5 w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-blue-950 focus:ring-1 focus:ring-blue-950"
+                          class="ml-8 mt-1.5 w-full px-3 py-1.5 text-xs bg-white border border-warm-border rounded-lg focus:outline-none focus:border-petrol focus:ring-1 focus:ring-petrol"
                         />
                       }
                     }

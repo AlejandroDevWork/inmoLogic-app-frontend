@@ -11,10 +11,10 @@ export type CardShadow = 'none' | 'sm' | 'md' | 'lg';
   template: `
     <div
       class="
-        bg-white
+        bg-warm-white
         rounded-2xl
         border
-        border-slate-100
+        border-warm-border
         transition-all
         duration-200
       "
@@ -23,7 +23,7 @@ export type CardShadow = 'none' | 'sm' | 'md' | 'lg';
       [class.shadow-lg]="shadow === 'lg'"
       [class.cursor-pointer]="hoverable"
       [class.hover:shadow-md]="hoverable"
-      [class.hover:border-blue-950/30]="hoverable"
+      [class.hover:border-earth/30]="hoverable"
       (mouseenter)="isHovered = true"
       (mouseleave)="isHovered = false"
     >
@@ -32,7 +32,7 @@ export type CardShadow = 'none' | 'sm' | 'md' | 'lg';
         <div
           class="
             border-b
-            border-slate-100
+            border-warm-border
             px-4
             py-3
           "
@@ -40,14 +40,14 @@ export type CardShadow = 'none' | 'sm' | 'md' | 'lg';
         >
           @if (title) {
             <h3
-              class="text-base font-semibold text-slate-900"
-              [class.text-blue-950]="accent"
+              class="text-base font-semibold text-petrol"
+              [class.text-earth]="accent"
             >
               {{ title }}
             </h3>
           }
           @if (subtitle) {
-            <p class="mt-0.5 text-sm text-slate-500">{{ subtitle }}</p>
+            <p class="mt-0.5 text-sm text-stone">{{ subtitle }}</p>
           }
         </div>
       }
@@ -63,7 +63,7 @@ export type CardShadow = 'none' | 'sm' | 'md' | 'lg';
 
       <!-- Footer Opcional (para acciones) -->
       @if (showFooter) {
-        <div class="border-t border-slate-100 px-4 py-3">
+        <div class="border-t border-warm-border px-4 py-3">
           <ng-content select="[card-footer]" />
         </div>
       }

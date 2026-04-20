@@ -20,8 +20,8 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
       <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
-          <p class="text-sm text-slate-500 mt-1">Resumen de tu cartera inmobiliaria</p>
+          <h1 class="text-2xl font-bold text-petrol">Dashboard</h1>
+          <p class="text-sm text-stone mt-1">Resumen de tu cartera inmobiliaria</p>
         </div>
         <app-button
           label="Nueva Propiedad"
@@ -35,14 +35,14 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
         <!-- Total Oportunidades -->
         <app-card padding="md" shadow="sm">
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-blue-950/10 rounded-lg">
-              <svg class="w-5 h-5 text-blue-950" fill="currentColor" viewBox="0 0 20 20">
+            <div class="p-2.5 bg-petrol/10 rounded-lg">
+              <svg class="w-5 h-5 text-petrol" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H6L4 4z"/>
               </svg>
             </div>
             <div>
-              <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Oportunidades</p>
-              <p class="text-xl font-bold text-slate-900">{{ totalProperties() }}</p>
+              <p class="text-xs font-medium text-stone uppercase tracking-wide">Oportunidades</p>
+              <p class="text-xl font-bold text-petrol">{{ totalProperties() }}</p>
             </div>
           </div>
         </app-card>
@@ -56,7 +56,7 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
               </svg>
             </div>
             <div>
-              <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">ROI Medio</p>
+              <p class="text-xs font-medium text-stone uppercase tracking-wide">ROI Medio</p>
               <p class="text-xl font-bold" [class]="getRoiTextColor()">{{ averageYield() }}%</p>
             </div>
           </div>
@@ -71,7 +71,7 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
               </svg>
             </div>
             <div>
-              <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Cashflow Total</p>
+              <p class="text-xs font-medium text-stone uppercase tracking-wide">Cashflow Total</p>
               <p class="text-xl font-bold" [class]="getCashflowTextColor()">{{ formatCurrency(totalCashflow()) }}/mes</p>
             </div>
           </div>
@@ -80,14 +80,14 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
         <!-- Agencias en Contacto -->
         <app-card padding="md" shadow="sm">
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-slate-100 rounded-lg">
-              <svg class="w-5 h-5 text-slate-700" fill="currentColor" viewBox="0 0 20 20">
+            <div class="p-2.5 bg-cream rounded-lg">
+              <svg class="w-5 h-5 text-petrol-light" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
               </svg>
             </div>
             <div>
-              <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Agencias</p>
-              <p class="text-xl font-bold text-slate-900">{{ totalAgencies() }}</p>
+              <p class="text-xs font-medium text-stone uppercase tracking-wide">Agencias</p>
+              <p class="text-xl font-bold text-petrol">{{ totalAgencies() }}</p>
             </div>
           </div>
         </app-card>
@@ -103,10 +103,10 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
               </div>
-              <p class="text-sm text-slate-600">¡Todo al día! No hay agencias pendientes de contacto.</p>
+              <p class="text-sm text-stone">¡Todo al día! No hay agencias pendientes de contacto.</p>
             </div>
           } @else {
-            <div class="divide-y divide-slate-100">
+            <div class="divide-y divide-warm-border">
               @for (status of agenciasRequierenContacto(); track status.agency.id) {
                 <div class="p-4 flex items-center justify-between">
                   <div class="flex items-center gap-3">
@@ -116,15 +116,15 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
                       [class]="getStatusColor(status.estado)"
                     ></div>
                     <div>
-                      <p class="font-medium text-slate-900">{{ status.agency.nombre }}</p>
-                      <p class="text-xs text-slate-500">
+                      <p class="font-medium text-petrol">{{ status.agency.nombre }}</p>
+                      <p class="text-xs text-stone">
                         {{ status.diasSinContacto === 999 ? 'Nunca contactado' : (status.diasSinContacto + ' días sin contacto') }}
                       </p>
                     </div>
                   </div>
                   <div class="flex items-center gap-2">
                     <button
-                      class="p-2 text-slate-400 hover:text-blue-950 hover:bg-blue-50 rounded-lg transition-colors"
+                      class="p-2 text-stone/60 hover:text-petrol hover:bg-petrol-50 rounded-lg transition-colors"
                       title="Llamar"
                     >
                       <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -132,7 +132,7 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
                       </svg>
                     </button>
                     <button
-                      class="p-2 text-slate-400 hover:text-blue-950 hover:bg-blue-50 rounded-lg transition-colors"
+                      class="p-2 text-stone/60 hover:text-petrol hover:bg-petrol-50 rounded-lg transition-colors"
                       title="Enviar email"
                     >
                       <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -156,12 +156,12 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
         <app-card title="Próximas Visitas" subtitle="Propiedades programadas para visitar" padding="none">
           @if (propiedadesEnVisita().length === 0) {
             <div class="p-6 text-center">
-              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-3">
-                <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-cream mb-3">
+                <svg class="w-6 h-6 text-stone/60" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                 </svg>
               </div>
-              <p class="text-sm text-slate-600">No hay visitas programadas.</p>
+              <p class="text-sm text-stone">No hay visitas programadas.</p>
               <app-button
                 label="Programar Visita"
                 size="sm"
@@ -171,31 +171,31 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
               />
             </div>
           } @else {
-            <div class="divide-y divide-slate-100">
+            <div class="divide-y divide-warm-border">
               @for (propiedad of propiedadesEnVisita(); track propiedad.id) {
                 <div class="p-4">
                   <div class="flex items-start justify-between">
                     <div class="flex-1">
-                      <p class="font-medium text-slate-900">{{ propiedad.direccion }}</p>
-                      <p class="text-sm text-slate-500 mt-0.5">{{ propiedad.zona }}</p>
+                      <p class="font-medium text-petrol">{{ propiedad.direccion }}</p>
+                      <p class="text-sm text-stone mt-0.5">{{ propiedad.zona }}</p>
                       @if (propiedad.agencyId) {
-                        <p class="text-xs text-slate-400 mt-1">
+                        <p class="text-xs text-stone/60 mt-1">
                           Agencia: {{ getAgencyName(propiedad.agencyId) }}
                         </p>
                       }
                     </div>
                     <div class="text-right">
                       @if (propiedad.fechaVisita) {
-                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 rounded-lg">
-                          <svg class="w-3.5 h-3.5 text-blue-950" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-petrol-50 rounded-lg">
+                          <svg class="w-3.5 h-3.5 text-petrol" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                           </svg>
-                          <span class="text-xs font-medium text-blue-950">
+                          <span class="text-xs font-medium text-petrol">
                             {{ formatDate(propiedad.fechaVisita) }}
                           </span>
                         </div>
                       }
-                      <p class="text-sm font-semibold text-blue-950 mt-2">
+                      <p class="text-sm font-semibold text-petrol mt-2">
                         {{ formatCurrency(propiedad.precioPedido) }}
                       </p>
                     </div>
@@ -218,7 +218,7 @@ import { Property, AgencyCrmStatus } from '../../core/models/inmo.interface';
               >
                 <span class="text-sm font-bold">{{ getCountByEstado(estado.key) }}</span>
               </div>
-              <p class="text-xs font-medium text-slate-600">{{ estado.nombre }}</p>
+              <p class="text-xs font-medium text-stone">{{ estado.nombre }}</p>
             </div>
           }
         </div>
@@ -295,8 +295,8 @@ export class DashboardComponent {
 
   getEstadoColor(estado: string): string {
     const colors: Record<string, string> = {
-      busqueda: 'bg-slate-100 text-slate-700',
-      visita: 'bg-blue-100 text-blue-700',
+      busqueda: 'bg-cream text-petrol-light',
+      visita: 'bg-earth-light/40 text-earth-dark',
       oferta: 'bg-amber-100 text-amber-700',
       arras: 'bg-purple-100 text-purple-700',
       alquilado: 'bg-green-100 text-green-700'
@@ -312,7 +312,7 @@ export class DashboardComponent {
   }
 
   getRoiTextColor(): string {
-    return 'text-slate-900';
+    return 'text-petrol';
   }
 
   getCashflowCardColor(): string {

@@ -66,20 +66,20 @@ import { SidebarComponent } from './sidebar.component';
     }
 
     .tab-button {
-      color: #8B8680;
+      color: #64748B;
       transition: all 0.25s ease;
     }
 
     .tab-button.tab-active {
-      color: #1A2E35;
+      color: #1E3A5F;
     }
 
     .tab-button.tab-active lucide-icon {
-      color: #1A2E35;
+      color: #1E3A5F;
     }
 
     lucide-icon {
-      color: #8B8680;
+      color: #64748B;
       transition: color 0.25s ease;
     }
   `]
