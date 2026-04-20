@@ -183,6 +183,7 @@ export class PropertyService {
       // Contacto vinculado a Inmobiliaria Madrid Centro
       this.addContact({
         nombre: 'María López',
+        tipo: 'gestor',
         telefono: '612345678',
         email: 'maria@inmocentro.es',
         whatsapp: '612345678',
@@ -196,6 +197,7 @@ export class PropertyService {
       // Contacto vinculado a la misma agencia
       this.addContact({
         nombre: 'Carlos Ruiz',
+        tipo: 'constructor',
         telefono: '698765432',
         whatsapp: '698765432',
         email: 'carlos@inmocentro.es',
@@ -208,6 +210,7 @@ export class PropertyService {
       // Contacto vinculado a Pisos Barcelona
       this.addContact({
         nombre: 'Jordi Martínez',
+        tipo: 'gestor',
         telefono: '634567890',
         whatsapp: '634567890',
         email: 'jordi@pisosbcn.es',
@@ -221,6 +224,7 @@ export class PropertyService {
       // Contacto independiente (sin agencia)
       this.addContact({
         nombre: 'Isabel Navarro',
+        tipo: 'notario',
         telefono: '677889900',
         email: 'isabel.navarro@email.com',
         desplazamiento: 'otros',
@@ -232,6 +236,7 @@ export class PropertyService {
       // Contacto independiente
       this.addContact({
         nombre: 'Pablo García',
+        tipo: 'constructor',
         telefono: '644556677',
         whatsapp: '644556677',
         desplazamiento: 'coche',
@@ -242,6 +247,7 @@ export class PropertyService {
       // Contacto vinculado a Costa Inmobiliaria
       this.addContact({
         nombre: 'Vicente Soriano',
+        tipo: 'gestor',
         telefono: '611223344',
         whatsapp: '611223344',
         email: 'vicente@costainmo.es',
@@ -254,6 +260,7 @@ export class PropertyService {
       // Contacto vinculado a Madrid Centro (3º contacto en la misma agencia)
       this.addContact({
         nombre: 'Ana Fernández',
+        tipo: 'arquitecto',
         telefono: '655123456',
         email: 'ana@inmocentro.es',
         desplazamiento: 'moto',
@@ -266,6 +273,7 @@ export class PropertyService {
       // Contacto vinculado a Costa Inmobiliaria (2º contacto)
       this.addContact({
         nombre: 'Laura Pérez',
+        tipo: 'abogado',
         telefono: '622334455',
         email: 'laura@costainmo.es',
         desplazamiento: 'coche',
