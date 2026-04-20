@@ -77,7 +77,7 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
       </div>
 
       <!-- Métricas Principales -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <!-- Inversión Total -->
         <app-card padding="md" shadow="sm">
           <div class="flex items-center gap-3">
@@ -138,7 +138,7 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
             />
 
             <!-- Impuestos y Tasas -->
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <app-input
                 label="ITP (%)"
                 type="number"

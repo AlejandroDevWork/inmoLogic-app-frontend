@@ -5,3 +5,5 @@ export { StatusBadgeComponent } from './components/status-badge/status-badge.com
 export { PropertyCardComponent } from './components/property-card/property-card.component';
 export { ChecklistGroupComponent } from './components/checklist-group/checklist-group.component';
 export { AppDropdownComponent } from './components/app-dropdown/app-dropdown.component';
+export { AddressAutocompleteComponent } from './components/address-autocomplete/address-autocomplete.component';
+export { AgencyMapComponent } from './components/agency-map/agency-map.component';

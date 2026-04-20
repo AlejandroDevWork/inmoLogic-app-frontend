@@ -15,7 +15,7 @@ import { LucideAngularModule, Home, TrendingUp, Wallet, Building2, Phone, Bell, 
     LucideAngularModule
   ],
   template: `
-    <div class="px-5 pt-8 pb-32 space-y-7 bg-cream min-h-full overflow-y-auto">
+    <div class="p-4 lg:p-6 space-y-7 bg-cream min-h-full overflow-y-auto">
 
           <!-- Header: Avatar + Saludo -->
           <div class="flex items-center gap-3.5">
@@ -30,7 +30,7 @@ import { LucideAngularModule, Home, TrendingUp, Wallet, Building2, Phone, Bell, 
 
           <!-- Quick Stats — Glassmorphism cards -->
           <div class="grid grid-cols-3 gap-3">
-            <div class="bg-white/70 backdrop-blur-md rounded-[20px] border border-white/40 shadow-sm p-4 text-center">
+            <div class="bg-white rounded-[20px] border border-warm-border shadow-sm p-4 text-center">
               <div class="flex justify-center mb-2">
                 <div class="w-9 h-9 rounded-[12px] bg-sand/60 flex items-center justify-center">
                   <lucide-icon [img]="iconHome" class="text-petrol" [size]="18"></lucide-icon>
@@ -40,7 +40,7 @@ import { LucideAngularModule, Home, TrendingUp, Wallet, Building2, Phone, Bell, 
               <p class="text-[10px] text-stone font-medium uppercase tracking-wide mt-0.5">Operaciones</p>
             </div>
 
-            <div class="bg-white/70 backdrop-blur-md rounded-[20px] border border-white/40 shadow-sm p-4 text-center">
+            <div class="bg-white rounded-[20px] border border-warm-border shadow-sm p-4 text-center">
               <div class="flex justify-center mb-2">
                 <div class="w-9 h-9 rounded-[12px] bg-earth-light/20 flex items-center justify-center">
                   <lucide-icon [img]="iconTrendingUp" class="text-earth-dark" [size]="18"></lucide-icon>
@@ -50,7 +50,7 @@ import { LucideAngularModule, Home, TrendingUp, Wallet, Building2, Phone, Bell, 
               <p class="text-[10px] text-stone font-medium uppercase tracking-wide mt-0.5">ROI Medio</p>
             </div>
 
-            <div class="bg-white/70 backdrop-blur-md rounded-[20px] border border-white/40 shadow-sm p-4 text-center">
+            <div class="bg-white rounded-[20px] border border-warm-border shadow-sm p-4 text-center">
               <div class="flex justify-center mb-2">
                 <div class="w-9 h-9 rounded-[12px] bg-emerald-100/60 flex items-center justify-center">
                   <lucide-icon [img]="iconWallet" class="text-emerald-700" [size]="18"></lucide-icon>
@@ -72,14 +72,14 @@ import { LucideAngularModule, Home, TrendingUp, Wallet, Building2, Phone, Bell, 
             </div>
 
             @if (propiedadesEnVisita().length === 0) {
-              <div class="bg-white/60 backdrop-blur-md rounded-[20px] border border-white/40 shadow-sm p-5 text-center">
+              <div class="bg-white rounded-[20px] border border-warm-border shadow-sm p-5 text-center">
                 <p class="text-xs text-stone">Sin visitas programadas hoy</p>
               </div>
             } @else {
-              <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-1 -mx-1 px-1">
+              <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-1 -mx-1 px-1 lg:flex-wrap lg:overflow-visible">
                 @for (prop of propiedadesEnVisita(); track prop.id) {
-                  <div class="bg-white/70 backdrop-blur-md rounded-[24px] border border-white/40 shadow-sm
-                              min-w-[260px] max-w-[280px] flex-shrink-0 overflow-hidden">
+                  <div class="bg-white rounded-[24px] border border-warm-border shadow-sm
+                              min-w-[260px] max-w-[280px] lg:min-w-[300px] lg:max-w-none lg:flex-[1_1_300px] flex-shrink-0 overflow-hidden">
                     <div class="h-28 bg-sand/50 relative">
                       @if (prop.imagenUrl) {
                         <img [src]="prop.imagenUrl" class="w-full h-full object-cover" />
@@ -124,7 +124,7 @@ import { LucideAngularModule, Home, TrendingUp, Wallet, Building2, Phone, Bell, 
                     <app-status-badge type="estado" [estado]="grupo.estado"></app-status-badge>
                     <span class="text-[10px] text-stone">{{ getCountByEstado(grupo.estado) }}</span>
                   </div>
-                  <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-1 -mx-1 px-1">
+                  <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-1 -mx-1 px-1 lg:flex-wrap lg:overflow-visible">
                     @for (prop of getPropertiesByEstado(grupo.estado); track prop.id) {
                       <app-property-card [property]="prop"
                                          (cardClick)="onPropertyClick($event)">
@@ -136,7 +136,7 @@ import { LucideAngularModule, Home, TrendingUp, Wallet, Building2, Phone, Bell, 
             }
 
             @if (totalProperties() === 0) {
-              <div class="bg-white/60 backdrop-blur-md rounded-[24px] border border-white/40 shadow-sm p-8 text-center">
+              <div class="bg-white rounded-[24px] border border-warm-border shadow-sm p-8 text-center">
                 <div class="w-14 h-14 rounded-[18px] bg-sand/60 mx-auto mb-3 flex items-center justify-center">
                   <lucide-icon [img]="iconHome" class="text-stone/40" [size]="28"></lucide-icon>
                 </div>
@@ -153,49 +153,63 @@ import { LucideAngularModule, Home, TrendingUp, Wallet, Building2, Phone, Bell, 
               <h2 class="text-sm font-semibold text-petrol">Recordatorios</h2>
             </div>
 
-            <div class="bg-white/70 backdrop-blur-md rounded-[24px] border border-white/40 shadow-sm overflow-hidden">
-              @for (status of agenciasRequierenContacto(); track status.agency.id) {
-                <div class="flex items-center gap-3 p-3.5 border-b border-cream last:border-b-0">
-                  <div class="w-8 h-8 rounded-[10px] flex items-center justify-center"
-                       [class]="status.estado === 'rojo' ? 'bg-red-50' : 'bg-amber-50'">
-                    <lucide-icon [img]="iconPhone"
-                      [class]="status.estado === 'rojo' ? 'text-red-500' : 'text-amber-500'"
-                      [size]="14"></lucide-icon>
+            @if (agenciasRequierenContacto().length === 0 && contactosRequierenContacto().length === 0) {
+              <div class="bg-white rounded-[24px] border border-warm-border shadow-sm p-5 text-center">
+                <p class="text-xs text-stone">Todo tranquilo</p>
+              </div>
+            } @else {
+              <!-- Agencias -->
+              @if (agenciasRequierenContacto().length > 0) {
+                <div class="mb-3">
+                  <p class="text-[10px] font-medium text-stone uppercase tracking-wide mb-2">Agencias</p>
+                  <div class="bg-white rounded-[20px] border border-warm-border shadow-sm overflow-hidden">
+                    @for (status of agenciasRequierenContacto(); track status.agency.id) {
+                      <div class="flex items-center gap-3 p-3 border-b border-cream last:border-b-0">
+                        <div class="w-8 h-8 rounded-[10px] flex items-center justify-center"
+                             [class]="status.estado === 'rojo' ? 'bg-red-50' : 'bg-amber-50'">
+                          <lucide-icon [img]="iconBuilding2"
+                            [class]="status.estado === 'rojo' ? 'text-red-500' : 'text-amber-500'"
+                            [size]="14"></lucide-icon>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-xs font-medium text-petrol truncate">{{ status.agency.nombre }}</p>
+                          <p class="text-[10px] text-stone">
+                            {{ status.diasSinContacto === 999 ? 'Nunca contactado' : status.diasSinContacto + ' días' }}
+                          </p>
+                        </div>
+                        <app-status-badge type="crm" [crmStatus]="status.estado"></app-status-badge>
+                      </div>
+                    }
                   </div>
-                  <div class="flex-1 min-w-0">
-                    <p class="text-xs font-medium text-petrol truncate">{{ status.agency.nombre }}</p>
-                    <p class="text-[10px] text-stone">
-                      {{ status.diasSinContacto === 999 ? 'Nunca contactado' : status.diasSinContacto + ' días' }}
-                    </p>
-                  </div>
-                  <app-status-badge type="crm" [crmStatus]="status.estado"></app-status-badge>
                 </div>
               }
 
-              @for (status of contactosRequierenContacto(); track status.contact.id) {
-                <div class="flex items-center gap-3 p-3.5 border-b border-cream last:border-b-0">
-                  <div class="w-8 h-8 rounded-[10px] flex items-center justify-center"
-                       [class]="status.estado === 'rojo' ? 'bg-red-50' : 'bg-amber-50'">
-                    <lucide-icon [img]="iconUsers"
-                      [class]="status.estado === 'rojo' ? 'text-red-500' : 'text-amber-500'"
-                      [size]="14"></lucide-icon>
+              <!-- Contactos -->
+              @if (contactosRequierenContacto().length > 0) {
+                <div>
+                  <p class="text-[10px] font-medium text-stone uppercase tracking-wide mb-2">Contactos</p>
+                  <div class="bg-white rounded-[20px] border border-warm-border shadow-sm overflow-hidden">
+                    @for (status of contactosRequierenContacto(); track status.contact.id) {
+                      <div class="flex items-center gap-3 p-3 border-b border-cream last:border-b-0">
+                        <div class="w-8 h-8 rounded-[10px] flex items-center justify-center"
+                             [class]="status.estado === 'rojo' ? 'bg-red-50' : 'bg-amber-50'">
+                          <lucide-icon [img]="iconUsers"
+                            [class]="status.estado === 'rojo' ? 'text-red-500' : 'text-amber-500'"
+                            [size]="14"></lucide-icon>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-xs font-medium text-petrol truncate">{{ status.contact.nombre }}</p>
+                          <p class="text-[10px] text-stone">
+                            {{ status.diasSinContacto === 999 ? 'Nunca contactado' : status.diasSinContacto + ' días' }}
+                          </p>
+                        </div>
+                        <app-status-badge type="crm" [crmStatus]="status.estado"></app-status-badge>
+                      </div>
+                    }
                   </div>
-                  <div class="flex-1 min-w-0">
-                    <p class="text-xs font-medium text-petrol truncate">{{ status.contact.nombre }}</p>
-                    <p class="text-[10px] text-stone">
-                      {{ status.diasSinContacto === 999 ? 'Nunca contactado' : status.diasSinContacto + ' días' }}
-                    </p>
-                  </div>
-                  <app-status-badge type="crm" [crmStatus]="status.estado"></app-status-badge>
                 </div>
               }
-
-              @if (agenciasRequierenContacto().length === 0 && contactosRequierenContacto().length === 0) {
-                <div class="p-5 text-center">
-                  <p class="text-xs text-stone">Todo tranquilo</p>
-                </div>
-              }
-            </div>
+            }
           </div>
 
     </div>

@@ -81,6 +81,289 @@ export class PropertyService {
         },
       });
     }
+
+    if (this.agenciesSignal().length === 0) {
+      this.addAgency({
+        nombre: 'Inmobiliaria Madrid Centro',
+        direccion: 'Calle Gran Vía 45, Madrid, España',
+        tipoRelacion: 'partner-preferente',
+        relacion: 4,
+        agentes: [
+          { id: this.generateId(), nombre: 'María López', telefono: '612345678', whatsapp: '612345678', email: 'maria@inmocentro.es' },
+          { id: this.generateId(), nombre: 'Carlos Ruiz', telefono: '698765432', whatsapp: '698765432', email: 'carlos@inmocentro.es' },
+          { id: this.generateId(), nombre: 'Ana Fernández', telefono: '655123456', email: 'ana@inmocentro.es' }
+        ],
+        notas: 'Buena relación, rapidez en respuestas',
+        lat: 40.4200,
+        lng: -3.7025,
+      });
+
+      this.addAgency({
+        nombre: 'Pisos Barcelona',
+        direccion: 'Passeig de Gràcia 78, Barcelona, España',
+        tipoRelacion: 'solo-captacion',
+        relacion: 3,
+        agentes: [
+          { id: this.generateId(), nombre: 'Jordi Martínez', telefono: '634567890', whatsapp: '634567890', email: 'jordi@pisosbcn.es' }
+        ],
+        notas: 'Especialistas en pisos del Eixample',
+        lat: 41.3954,
+        lng: 2.1628,
+      });
+
+      this.addAgency({
+        nombre: 'Costa Inmobiliaria',
+        direccion: 'Avenida del Mar 12, Valencia, España',
+        tipoRelacion: 'ocasional',
+        relacion: 2,
+        agentes: [
+          { id: this.generateId(), nombre: 'Vicente Soriano', telefono: '611223344', whatsapp: '611223344', email: 'vicente@costainmo.es' },
+          { id: this.generateId(), nombre: 'Laura Pérez', telefono: '622334455', email: 'laura@costainmo.es' }
+        ],
+        notas: 'Buenas oportunidades en la costa',
+        lat: 39.4699,
+        lng: -0.3763,
+      });
+
+      this.addAgency({
+        nombre: 'Gestión Inmueble Sevilla',
+        direccion: 'Calle Sierpes 22, Sevilla, España',
+        tipoRelacion: 'nueva',
+        relacion: 1,
+        agentes: [],
+        notas: 'Primer contacto pendiente',
+        lat: 37.3886,
+        lng: -5.9823,
+      });
+
+      this.addAgency({
+        nombre: 'Raíces Bilbao',
+        direccion: 'Gran Vía Don Diego López de Haro 30, Bilbao, España',
+        tipoRelacion: 'partner-preferente',
+        relacion: 5,
+        agentes: [
+          { id: this.generateId(), nombre: 'Aitor Etxebarria', telefono: '644778899', whatsapp: '644778899', email: 'aitor@raicesbilbao.es' },
+          { id: this.generateId(), nombre: 'Leire Goikoetxea', telefono: '655889900', email: 'leire@raicesbilbao.es' },
+          { id: this.generateId(), nombre: 'Unai Mendizabal', telefono: '611990011', whatsapp: '611990011' }
+        ],
+        notas: 'Excelente profesionalidad, muy recomendados',
+        lat: 43.2630,
+        lng: -2.9350,
+      });
+
+      this.addAgency({
+        nombre: 'Sol y Piso Málaga',
+        direccion: 'Calle Larios 15, Málaga, España',
+        tipoRelacion: 'solo-captacion',
+        relacion: 3,
+        agentes: [
+          { id: this.generateId(), nombre: 'Antonio Serrano', telefono: '622112233', whatsapp: '622112233', email: 'antonio@solypiso.es' },
+          { id: this.generateId(), nombre: 'Carmen Delgado', telefono: '633223344', email: 'carmen@solypiso.es' }
+        ],
+        notas: 'Buena Cartera en costa del Sol',
+        lat: 36.7213,
+        lng: -4.4214,
+      });
+
+      this.addAgency({
+        nombre: 'Norte Inmuebles Zaragoza',
+        direccion: 'Paseo Independencia 50, Zaragoza, España',
+        tipoRelacion: 'ocasional',
+        relacion: 2,
+        agentes: [
+          { id: this.generateId(), nombre: 'Rosa Murillo', telefono: '676543210', email: 'rosa@norteinmuebles.es' }
+        ],
+        notas: 'Ocasionales, buenas oportunidades puntuales',
+        lat: 41.6488,
+        lng: -0.8891,
+      });
+    }
+
+    if (this.contactsSignal().length === 0) {
+      // Contacto vinculado a Inmobiliaria Madrid Centro
+      this.addContact({
+        nombre: 'María López',
+        telefono: '612345678',
+        email: 'maria@inmocentro.es',
+        whatsapp: '612345678',
+        desplazamiento: 'coche',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Inmobiliaria Madrid Centro')?.id,
+        lastContactDate: new Date(Date.now() - 3 * 86400000).toISOString(),
+        notas: 'Agente principal de Madrid Centro, muy profesional',
+        notasCafe: 'Le gusta el café con leche descafeinado',
+      });
+
+      // Contacto vinculado a la misma agencia
+      this.addContact({
+        nombre: 'Carlos Ruiz',
+        telefono: '698765432',
+        whatsapp: '698765432',
+        email: 'carlos@inmocentro.es',
+        desplazamiento: 'moto',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Inmobiliaria Madrid Centro')?.id,
+        lastContactDate: new Date(Date.now() - 12 * 86400000).toISOString(),
+        notas: 'Encargado de zonas sur',
+      });
+
+      // Contacto vinculado a Pisos Barcelona
+      this.addContact({
+        nombre: 'Jordi Martínez',
+        telefono: '634567890',
+        whatsapp: '634567890',
+        email: 'jordi@pisosbcn.es',
+        desplazamiento: 'coche',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Pisos Barcelona')?.id,
+        lastContactDate: new Date(Date.now() - 1 * 86400000).toISOString(),
+        notas: 'Conoce muy bien el mercado del Eixample',
+        notasCafe: 'Café solo siempre',
+      });
+
+      // Contacto independiente (sin agencia)
+      this.addContact({
+        nombre: 'Isabel Navarro',
+        telefono: '677889900',
+        email: 'isabel.navarro@email.com',
+        desplazamiento: 'otros',
+        lastContactDate: new Date(Date.now() - 20 * 86400000).toISOString(),
+        notas: 'Propietaria directa, busca vender piso en Chamberí',
+        notasCafe: 'Té verde',
+      });
+
+      // Contacto independiente
+      this.addContact({
+        nombre: 'Pablo García',
+        telefono: '644556677',
+        whatsapp: '644556677',
+        desplazamiento: 'coche',
+        notas: 'Inversor potencial, interesado en rentabilidad > 7%',
+        notasCafe: 'Café cortado',
+      });
+
+      // Contacto vinculado a Costa Inmobiliaria
+      this.addContact({
+        nombre: 'Vicente Soriano',
+        telefono: '611223344',
+        whatsapp: '611223344',
+        email: 'vicente@costainmo.es',
+        desplazamiento: 'coche',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Costa Inmobiliaria')?.id,
+        lastContactDate: new Date(Date.now() - 5 * 86400000).toISOString(),
+        notas: 'Director de Costa Inmobiliaria, buen trato personal',
+      });
+
+      // Contacto vinculado a Madrid Centro (3º contacto en la misma agencia)
+      this.addContact({
+        nombre: 'Ana Fernández',
+        telefono: '655123456',
+        email: 'ana@inmocentro.es',
+        desplazamiento: 'moto',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Inmobiliaria Madrid Centro')?.id,
+        lastContactDate: new Date(Date.now() - 8 * 86400000).toISOString(),
+        notas: 'Gestiona pisos en el barrio de Salamanca',
+        notasCafe: 'Café con leche',
+      });
+
+      // Contacto vinculado a Costa Inmobiliaria (2º contacto)
+      this.addContact({
+        nombre: 'Laura Pérez',
+        telefono: '622334455',
+        email: 'laura@costainmo.es',
+        desplazamiento: 'coche',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Costa Inmobiliaria')?.id,
+        lastContactDate: new Date(Date.now() - 18 * 86400000).toISOString(),
+        notas: 'Se ocupa de la zona de la Malvarrosa',
+      });
+
+      // Contacto vinculado a Raíces Bilbao (1º)
+      this.addContact({
+        nombre: 'Aitor Etxebarria',
+        telefono: '644778899',
+        whatsapp: '644778899',
+        email: 'aitor@raicesbilbao.es',
+        desplazamiento: 'coche',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Raíces Bilbao')?.id,
+        lastContactDate: new Date(Date.now() - 2 * 86400000).toISOString(),
+        notas: 'Director comercial, muy activo',
+        notasCafe: 'Café solo largo',
+      });
+
+      // Contacto vinculado a Raíces Bilbao (2º)
+      this.addContact({
+        nombre: 'Leire Goikoetxea',
+        telefono: '655889900',
+        email: 'leire@raicesbilbao.es',
+        desplazamiento: 'moto',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Raíces Bilbao')?.id,
+        lastContactDate: new Date(Date.now() - 6 * 86400000).toISOString(),
+        notas: 'Especialista en pisos reformados en Getxo',
+        notasCafe: 'Infusión de frutos rojos',
+      });
+
+      // Contacto vinculado a Raíces Bilbao (3º)
+      this.addContact({
+        nombre: 'Unai Mendizabal',
+        telefono: '611990011',
+        whatsapp: '611990011',
+        desplazamiento: 'otros',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Raíces Bilbao')?.id,
+        notas: 'Nuevo en el equipo, en formación',
+      });
+
+      // Contacto vinculado a Sol y Piso Málaga (1º)
+      this.addContact({
+        nombre: 'Antonio Serrano',
+        telefono: '622112233',
+        whatsapp: '622112233',
+        email: 'antonio@solypiso.es',
+        desplazamiento: 'coche',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Sol y Piso Málaga')?.id,
+        lastContactDate: new Date(Date.now() - 10 * 86400000).toISOString(),
+        notas: 'Conoce toda la costa occidental',
+      });
+
+      // Contacto vinculado a Sol y Piso Málaga (2º)
+      this.addContact({
+        nombre: 'Carmen Delgado',
+        telefono: '633223344',
+        email: 'carmen@solypiso.es',
+        desplazamiento: 'coche',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Sol y Piso Málaga')?.id,
+        lastContactDate: new Date(Date.now() - 4 * 86400000).toISOString(),
+        notas: 'Gestiona alquileres vacacionales',
+        notasCafe: 'Café con leche descafeinado',
+      });
+
+      // Contacto vinculado a Norte Inmuebles Zaragoza
+      this.addContact({
+        nombre: 'Rosa Murillo',
+        telefono: '676543210',
+        email: 'rosa@norteinmuebles.es',
+        desplazamiento: 'coche',
+        agencyId: this.agenciesSignal().find(a => a.nombre === 'Norte Inmuebles Zaragoza')?.id,
+        lastContactDate: new Date(Date.now() - 25 * 86400000).toISOString(),
+        notas: 'Contacto antiguo, hay que reactivar',
+      });
+
+      // Contacto independiente (sin agencia)
+      this.addContact({
+        nombre: 'Fernando Ortiz',
+        telefono: '699112233',
+        whatsapp: '699112233',
+        desplazamiento: 'coche',
+        notas: 'Propietario de varios locales en Tetuán, posible acuerdo de exclusiva',
+        notasCafe: 'Espresso doble',
+      });
+
+      // Contacto independiente (sin agencia)
+      this.addContact({
+        nombre: 'Elena Ruiz',
+        telefono: '688334455',
+        email: 'elena.ruiz@email.com',
+        desplazamiento: 'moto',
+        lastContactDate: new Date(Date.now() - 30 * 86400000).toISOString(),
+        notas: 'Abogada especializada en derecho inmobiliario, buena referida para contratos',
+      });
+    }
   }
 
   // === PUBLIC READ-ONLY SIGNALS ===

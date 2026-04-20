@@ -317,6 +317,11 @@ export function createCalculationEngine() {
     med: craAlquilerAnual().med / inversionTotal(),
     max: craAlquilerAnual().max / inversionTotal(),
   }));
+  const craRentabilidadBrutaTradicional = computed(() => ({
+    min: craAlquilerAnual().min / (precioCompra() || 1),
+    med: craAlquilerAnual().med / (precioCompra() || 1),
+    max: craAlquilerAnual().max / (precioCompra() || 1),
+  }));
   const craRentabilidadNeta = computed(() => ({
     min: craBeneficioBruto().min / inversionTotal(),
     med: craBeneficioBruto().med / inversionTotal(),
@@ -515,7 +520,7 @@ export function createCalculationEngine() {
     gastosAnuales, prestamoHipotecario, capitalPropio,
     cuotaMensual, cuotaAnual, interesesAnio1, amortizacionAnio1,
     craAlquilerAnual, craIngresosAnuales, craGastosTotales,
-    craBeneficioBruto, craRentabilidadBruta, craRentabilidadNeta,
+    craBeneficioBruto, craRentabilidadBruta, craRentabilidadBrutaTradicional, craRentabilidadNeta,
     craBeneficioDespuesFinanciacion, craROE, craCashflowCapital,
     crvBeneficioBruto, crvRentabilidad,
     comparativa, reformaTotal, bonificaciones,

@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  locationiqKey: 'YOUR_LOCATIONIQ_API_KEY'
 };

@@ -20,7 +20,7 @@ const CHECKLIST_ITEMS: Record<string, string[]> = {
   imports: [CommonModule, ReactiveFormsModule, AppCardComponent, AppInputComponent, AppButtonComponent],
   template: `
     <div class="bg-slate-50 min-h-full overflow-y-auto p-4">
-      <div class="max-w-6xl mx-auto space-y-6 pb-24">
+      <div class="max-w-6xl mx-auto space-y-6 pb-24 lg:pb-6">
 
         <!-- Header -->
         <div class="flex items-center justify-between pt-4">

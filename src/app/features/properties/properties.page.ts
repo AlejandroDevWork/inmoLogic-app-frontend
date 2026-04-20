@@ -14,7 +14,7 @@ import { LucideAngularModule, Building2, Search, SlidersHorizontal } from 'lucid
     LucideAngularModule
   ],
   template: `
-    <div class="px-5 pt-8 pb-32 space-y-6 bg-cream min-h-full overflow-y-auto">
+    <div class="p-4 lg:p-6 space-y-6 bg-cream min-h-full overflow-y-auto">
 
           <!-- Header -->
           <div>
@@ -29,7 +29,7 @@ import { LucideAngularModule, Building2, Search, SlidersHorizontal } from 'lucid
               type="text"
               placeholder="Buscar por dirección o zona..."
               (input)="onSearch($event)"
-              class="w-full pl-10 pr-4 py-3 bg-white/70 backdrop-blur-md rounded-[16px] border border-white/40 shadow-sm
+              class="w-full pl-10 pr-4 py-3 bg-white rounded-[16px] border border-warm-border shadow-sm
                      text-sm text-petrol placeholder:text-stone/40
                      focus:border-earth focus:outline-none transition-colors duration-200"
             />
@@ -44,7 +44,7 @@ import { LucideAngularModule, Building2, Search, SlidersHorizontal } from 'lucid
                        transition-all duration-200"
                 [class]="filtroActual === estado.key
                   ? 'bg-petrol text-white'
-                  : 'bg-white/60 text-stone border border-white/40'"
+                  : 'bg-white text-stone border border-warm-border'"
               >
                 {{ estado.nombre }}
                 <span class="ml-1 opacity-60">({{ getCountByEstado(estado.key) }})</span>
@@ -54,7 +54,7 @@ import { LucideAngularModule, Building2, Search, SlidersHorizontal } from 'lucid
 
           <!-- Grid de propiedades -->
           @if (filteredProperties().length === 0) {
-            <div class="bg-white/60 backdrop-blur-md rounded-[28px] border border-white/40 shadow-sm p-10 text-center">
+            <div class="bg-white rounded-[28px] border border-warm-border shadow-sm p-10 text-center">
               <div class="w-14 h-14 rounded-[18px] bg-sand/40 mx-auto mb-3 flex items-center justify-center">
                 <lucide-icon [img]="iconBuilding2" class="text-stone/30" [size]="28"></lucide-icon>
               </div>
@@ -62,7 +62,7 @@ import { LucideAngularModule, Building2, Search, SlidersHorizontal } from 'lucid
               <p class="text-xs text-stone mt-1">Añade tu primera oportunidad</p>
             </div>
           } @else {
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               @for (propiedad of filteredProperties(); track propiedad.id) {
                 <app-property-card [property]="propiedad"
                                    (cardClick)="onPropertyClick($event)">

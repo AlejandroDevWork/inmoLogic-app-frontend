@@ -10,7 +10,7 @@ import { LucideAngularModule, MapPin, ArrowRight } from 'lucide-angular';
   imports: [CommonModule, StatusBadgeComponent, LucideAngularModule],
   template: `
     <div
-      class="bg-white/70 backdrop-blur-md rounded-[28px] border border-white/40 shadow-sm
+      class="bg-white rounded-[28px] border border-warm-border shadow-sm
              overflow-hidden cursor-pointer transition-all duration-300
              hover:shadow-md hover:border-earth/20 active:scale-[0.98]"
       (click)="cardClick.emit(property)"

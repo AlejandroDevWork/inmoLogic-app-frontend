@@ -1,10 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PropertyService } from '../../core/services/property.service';
-import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 import { AppDropdownComponent } from '../../shared/components/app-dropdown/app-dropdown.component';
-import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, StickyNote, MapPin, Plus, X } from 'lucide-angular';
+import { AddressAutocompleteComponent } from '../../shared/components/address-autocomplete/address-autocomplete.component';
+import { AgencyMapComponent } from '../../shared/components/agency-map/agency-map.component';
+import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, StickyNote, MapPin, Plus, X, Search, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-angular';
 
 @Component({
   selector: 'app-agencies',
@@ -12,12 +13,13 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
   imports: [
     CommonModule,
     FormsModule,
-    StatusBadgeComponent,
     AppDropdownComponent,
+    AddressAutocompleteComponent,
+    AgencyMapComponent,
     LucideAngularModule
   ],
   template: `
-    <div class="px-5 pt-8 pb-32 space-y-6 bg-cream min-h-full overflow-y-auto">
+    <div class="p-4 lg:p-6 space-y-5 bg-cream min-h-full overflow-y-auto">
 
           <!-- Header -->
           <div class="flex items-center justify-between">
@@ -25,43 +27,113 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
               <h1 class="text-xl font-bold text-petrol">Agencias</h1>
               <p class="text-xs text-stone mt-1">CRM de contactos y relaciones</p>
             </div>
-            <button (click)="showAddModal.set(true)"
-              class="w-10 h-10 rounded-[14px] bg-earth flex items-center justify-center
-                     shadow-sm transition-all duration-200 active:scale-95">
-              <lucide-icon [img]="iconPlus" class="text-white" [size]="20"></lucide-icon>
-            </button>
+            <div class="flex items-center gap-2">
+              @if (agenciesConCoords().length > 0) {
+                <button (click)="showMap.set(!showMap())"
+                  class="w-10 h-10 rounded-[14px] bg-white border border-warm-border flex items-center justify-center
+                         shadow-sm transition-all duration-200 active:scale-95 hover:bg-sand/40"
+                  [class]="showMap() ? 'ring-2 ring-earth/30' : ''">
+                  <lucide-icon [img]="iconMap" class="text-petrol" [size]="20"></lucide-icon>
+                </button>
+              }
+              <button (click)="showAddModal.set(true)"
+                class="w-10 h-10 rounded-[14px] bg-earth flex items-center justify-center
+                       shadow-sm transition-all duration-200 active:scale-95">
+                <lucide-icon [img]="iconPlus" class="text-white" [size]="20"></lucide-icon>
+              </button>
+            </div>
           </div>
 
-          <!-- Alertas CRM -->
-          @if (agenciasAlerta().length > 0) {
-            <div>
-              <h2 class="text-sm font-semibold text-petrol mb-3">Requieren contacto</h2>
-              <div class="bg-white/70 backdrop-blur-md rounded-[24px] border border-white/40 shadow-sm overflow-hidden">
-                @for (status of agenciasAlerta(); track status.agency.id) {
-                  <div class="flex items-center gap-3 p-4 border-b border-cream last:border-b-0">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
-                         [class]="status.estado === 'rojo' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'">
-                      {{ status.agency.nombre.charAt(0) }}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-petrol truncate">{{ status.agency.nombre }}</p>
-                      <p class="text-xs text-stone">
-                        {{ status.diasSinContacto === 999 ? 'Nunca contactado' : status.diasSinContacto + ' días' }}
-                      </p>
-                    </div>
-                    <app-status-badge type="crm" [crmStatus]="status.estado"></app-status-badge>
-                  </div>
-                }
+          <!-- Mapa (collapsible) -->
+          @if (agenciesConCoords().length > 0) {
+            <div class="map-container"
+                 [class]="showMap() ? 'map-container-open' : 'map-container-closed'">
+              <div class="bg-white rounded-[24px] border border-warm-border shadow-sm overflow-hidden">
+                <app-agency-map [agencies]="agenciesConCoords()"></app-agency-map>
               </div>
             </div>
           }
 
-          <!-- Todas las Agencias -->
+          <!-- Search + Filter button -->
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <lucide-icon [img]="iconSearch" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone/40" [size]="16"></lucide-icon>
+              <input type="text" placeholder="Buscar agencia..."
+                [value]="searchTerm()"
+                (input)="searchTerm.set($any($event.target).value); currentPage.set(1)"
+                class="w-full pl-10 pr-4 py-2.5 bg-white rounded-[14px] text-sm text-petrol
+                       placeholder:text-stone/30 border border-warm-border
+                       focus:border-earth focus:outline-none transition-colors" />
+            </div>
+            <button (click)="showFilterModal.set(true)"
+              class="w-10 h-10 rounded-[14px] bg-white border border-warm-border flex items-center justify-center
+                     shadow-sm transition-all duration-200 active:scale-95 hover:bg-sand/40 relative">
+              <lucide-icon [img]="iconFilter" class="text-petrol" [size]="18"></lucide-icon>
+              @if (hasActiveFilters()) {
+                <div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-earth"></div>
+              }
+            </button>
+          </div>
+
+          <!-- Active filter pills -->
+          @if (hasActiveFilters()) {
+            <div class="flex flex-wrap gap-1.5">
+              @if (filtroRelacion() !== 'todas') {
+                <button (click)="filtroRelacion.set('todas'); currentPage.set(1)"
+                  class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
+                         bg-petrol text-white">
+                  {{ getRelacionLabel(filtroRelacion()) }}
+                  <lucide-icon [img]="iconX" [size]="10"></lucide-icon>
+                </button>
+              }
+              @if (filtroEstrellas() !== 0) {
+                <button (click)="filtroEstrellas.set(0); currentPage.set(1)"
+                  class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
+                         bg-petrol text-white">
+                  {{ filtroEstrellas() }}+ estrellas
+                  <lucide-icon [img]="iconX" [size]="10"></lucide-icon>
+                </button>
+              }
+              @if (filtroOrden() !== 'nombre') {
+                <button (click)="filtroOrden.set('nombre')"
+                  class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
+                         bg-petrol text-white">
+                  {{ getOrdenLabel(filtroOrden()) }}
+                  <lucide-icon [img]="iconX" [size]="10"></lucide-icon>
+                </button>
+              }
+              @if (filtroCiudad() !== 'todas') {
+                <button (click)="filtroCiudad.set('todas'); currentPage.set(1)"
+                  class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
+                         bg-petrol text-white">
+                  {{ filtroCiudad() }}
+                  <lucide-icon [img]="iconX" [size]="10"></lucide-icon>
+                </button>
+              }
+              <button (click)="clearFilters(); currentPage.set(1)"
+                class="px-2.5 py-1 rounded-[10px] text-[11px] font-medium
+                       text-stone hover:text-petrol transition-colors">
+                Limpiar todo
+              </button>
+            </div>
+          }
+
+          <!-- Agencias list -->
           <div>
-            <h2 class="text-sm font-semibold text-petrol mb-3">Todas las agencias</h2>
-            <div class="space-y-3">
-              @for (agency of agencies(); track agency.id) {
-                <div class="bg-white/70 backdrop-blur-md rounded-[28px] border border-white/40 shadow-sm p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-sm font-semibold text-petrol">Agencias</h2>
+              <select [value]="pageSize()"
+                      (change)="onPageSizeChange($any($event.target).value)"
+                      class="text-[11px] text-stone bg-white border border-warm-border rounded-[8px] px-2 py-1
+                             focus:outline-none focus:border-earth">
+                @for (size of [5, 10, 15, 20, 25]; track size) {
+                  <option [value]="size">{{ size }}</option>
+                }
+              </select>
+            </div>
+            <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+              @for (agency of paginatedAgencies(); track agency.id) {
+                <div class="bg-white rounded-[28px] border border-warm-border shadow-sm p-4">
                   <!-- Agency header -->
                   <div class="flex items-start gap-3">
                     <div class="w-11 h-11 rounded-[14px] bg-sand/60 flex items-center justify-center text-petrol text-sm font-bold flex-shrink-0">
@@ -83,7 +155,6 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
                           <p class="text-[11px] text-stone">{{ agency.direccion }}</p>
                         </div>
                       }
-                      <!-- Stars -->
                       <div class="flex items-center gap-0.5 mt-1.5">
                         @for (star of [1, 2, 3, 4, 5]; track star) {
                           <lucide-icon [img]="iconStar" [size]="11"
@@ -93,7 +164,6 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
                       </div>
                     </div>
 
-                    <!-- Quick actions -->
                     <div class="flex items-center gap-1.5">
                       <button class="w-8 h-8 rounded-[10px] bg-sand/40 flex items-center justify-center
                                      text-stone hover:text-petrol transition-colors">
@@ -106,7 +176,6 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
                     </div>
                   </div>
 
-                  <!-- Agentes -->
                   @if (agency.agentes && agency.agentes.length > 0) {
                     <div class="mt-3 pt-3 border-t border-cream space-y-2.5">
                       @for (agente of agency.agentes; track agente.id) {
@@ -146,7 +215,6 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
                     </div>
                   }
 
-                  <!-- Notas de relación -->
                   @if (agency.notas) {
                     <div class="mt-3 pt-3 border-t border-cream">
                       <div class="flex items-start gap-1.5">
@@ -157,7 +225,7 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
                   }
                 </div>
               } @empty {
-                <div class="bg-white/60 backdrop-blur-md rounded-[24px] border border-white/40 shadow-sm p-10 text-center">
+                <div class="lg:col-span-2 bg-white rounded-[24px] border border-warm-border shadow-sm p-10 text-center">
                   <div class="w-14 h-14 rounded-[18px] bg-sand/40 mx-auto mb-3 flex items-center justify-center">
                     <lucide-icon [img]="iconBuilding2" class="text-stone/30" [size]="28"></lucide-icon>
                   </div>
@@ -166,20 +234,156 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
                 </div>
               }
             </div>
+
+            <!-- Pagination -->
+            @if (totalPages() > 1) {
+              <div class="flex items-center justify-center gap-1.5 mt-5">
+                <button (click)="goToPage(currentPage() - 1)"
+                  [disabled]="currentPage() === 1"
+                  class="w-8 h-8 rounded-[10px] flex items-center justify-center transition-colors
+                         disabled:opacity-30 disabled:cursor-default
+                         bg-white border border-warm-border text-stone hover:text-petrol">
+                  <lucide-icon [img]="iconChevronDown" [size]="14" class="rotate-90"></lucide-icon>
+                </button>
+                @for (page of pageNumbers(); track page) {
+                  <button (click)="goToPage(page)"
+                    class="w-8 h-8 rounded-[10px] flex items-center justify-center text-xs font-medium transition-colors"
+                    [class]="page === currentPage()
+                      ? 'bg-petrol text-white'
+                      : 'bg-white border border-warm-border text-stone hover:text-petrol'">
+                    {{ page }}
+                  </button>
+                }
+                <button (click)="goToPage(currentPage() + 1)"
+                  [disabled]="currentPage() === totalPages()"
+                  class="w-8 h-8 rounded-[10px] flex items-center justify-center transition-colors
+                         disabled:opacity-30 disabled:cursor-default
+                         bg-white border border-warm-border text-stone hover:text-petrol">
+                  <lucide-icon [img]="iconChevronDown" [size]="14" class="-rotate-90"></lucide-icon>
+                </button>
+              </div>
+            }
           </div>
 
     </div>
 
+    <!-- Filter Modal -->
+    @if (showFilterModal()) {
+      <div class="fixed inset-0 z-50 flex items-end lg:items-center justify-center"
+           (click)="showFilterModal.set(false)">
+        <div class="absolute inset-0 bg-petrol/40 backdrop-blur-sm"></div>
+        <div class="relative w-full max-w-lg bg-white rounded-t-[28px] lg:rounded-[28px] shadow-xl
+                    max-h-[85vh] overflow-y-auto animate-slide-up lg:animate-fade-in"
+             (click)="$event.stopPropagation()">
+          <div class="sticky top-0 bg-white flex items-center justify-between p-5 pb-3 border-b border-cream z-10">
+            <div class="flex items-center gap-2">
+              <lucide-icon [img]="iconFilter" class="text-petrol" [size]="18"></lucide-icon>
+              <h2 class="text-lg font-bold text-petrol">Filtros</h2>
+            </div>
+            <button (click)="showFilterModal.set(false)"
+              class="w-8 h-8 rounded-[10px] bg-cream/60 flex items-center justify-center text-stone
+                     hover:text-petrol transition-colors">
+              <lucide-icon [img]="iconX" [size]="16"></lucide-icon>
+            </button>
+          </div>
+
+          <div class="p-5 space-y-5">
+            <!-- Relación -->
+            <div>
+              <label class="text-xs text-petrol font-semibold mb-2 block">Tipo de relación</label>
+              <div class="flex flex-wrap gap-1.5">
+                @for (chip of filtroRelacionChips; track chip.key) {
+                  <button (click)="filtroRelacion.set(chip.key); currentPage.set(1)"
+                    class="px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all duration-200"
+                    [class]="filtroRelacion() === chip.key
+                      ? 'bg-petrol text-white'
+                      : 'bg-white text-petrol border border-warm-border hover:bg-sand/40'">
+                    {{ chip.label }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Estrellas -->
+            <div>
+              <label class="text-xs text-petrol font-semibold mb-2 block">Valoración mínima</label>
+              <div class="flex gap-1.5">
+                @for (n of [0, 1, 2, 3, 4, 5]; track n) {
+                  <button (click)="filtroEstrellas.set(n); currentPage.set(1)"
+                    class="flex items-center gap-1 px-2.5 py-1.5 rounded-[10px] text-xs font-medium transition-all duration-200"
+                    [class]="filtroEstrellas() === n
+                      ? 'bg-petrol text-white'
+                      : 'bg-white text-petrol border border-warm-border hover:bg-sand/40'">
+                    @if (n === 0) {
+                      Todas
+                    } @else {
+                      <lucide-icon [img]="iconStar" [size]="10" class="text-earth"></lucide-icon>
+                      {{ n }}+
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Orden -->
+            <div>
+              <label class="text-xs text-petrol font-semibold mb-2 block">Ordenar por</label>
+              <app-dropdown [options]="ordenLabels" placeholder="Nombre"
+                (selectedChange)="onOrdenSelected($event)"></app-dropdown>
+            </div>
+
+            <!-- Ubicación -->
+            @if (ciudadesDisponibles().length > 1) {
+              <div>
+                <label class="text-xs text-petrol font-semibold mb-2 block">Ubicación</label>
+                <div class="flex flex-wrap gap-1.5">
+                  <button (click)="filtroCiudad.set('todas'); currentPage.set(1)"
+                    class="px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all duration-200"
+                    [class]="filtroCiudad() === 'todas'
+                      ? 'bg-petrol text-white'
+                      : 'bg-white text-petrol border border-warm-border hover:bg-sand/40'">
+                    Todas
+                  </button>
+                  @for (ciudad of ciudadesDisponibles(); track ciudad) {
+                    <button (click)="filtroCiudad.set(ciudad); currentPage.set(1)"
+                      class="px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all duration-200"
+                      [class]="filtroCiudad() === ciudad
+                        ? 'bg-petrol text-white'
+                        : 'bg-white text-petrol border border-warm-border hover:bg-sand/40'">
+                      {{ ciudad }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Actions -->
+            <div class="flex gap-2 pt-2">
+              <button (click)="clearFilters(); currentPage.set(1)"
+                class="flex-1 py-2.5 rounded-[14px] text-sm font-medium border border-warm-border
+                       text-stone hover:text-petrol transition-colors">
+                Limpiar filtros
+              </button>
+              <button (click)="showFilterModal.set(false)"
+                class="flex-1 py-2.5 rounded-[14px] text-sm font-medium bg-petrol text-white
+                       shadow-sm transition-all duration-200 active:scale-[0.98]">
+                Aplicar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
     <!-- Add Agency Modal -->
     @if (showAddModal()) {
-      <div class="fixed inset-0 z-50 flex items-end justify-center"
+      <div class="fixed inset-0 z-50 flex items-end lg:items-center justify-center"
            (click)="showAddModal.set(false)">
         <div class="absolute inset-0 bg-petrol/40 backdrop-blur-sm"></div>
-        <div class="relative w-full max-w-lg bg-white rounded-t-[28px] shadow-xl
-                    max-h-[85vh] overflow-y-auto animate-slide-up"
+        <div class="relative w-full max-w-lg bg-white rounded-t-[28px] lg:rounded-[28px] shadow-xl
+                    max-h-[85vh] overflow-y-auto animate-slide-up lg:animate-fade-in"
              (click)="$event.stopPropagation()">
-          <!-- Modal header -->
-          <div class="sticky top-0 bg-white flex items-center justify-between p-5 pb-3 border-b border-cream">
+          <div class="sticky top-0 bg-white flex items-center justify-between p-5 pb-3 border-b border-cream z-10">
             <h2 class="text-lg font-bold text-petrol">Nueva agencia</h2>
             <button (click)="showAddModal.set(false)"
               class="w-8 h-8 rounded-[10px] bg-cream/60 flex items-center justify-center text-stone
@@ -188,25 +392,22 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
             </button>
           </div>
 
-          <!-- Form -->
           <div class="p-5 space-y-4">
             <div>
               <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Nombre</label>
               <input type="text" placeholder="Nombre de la agencia"
                 [(ngModel)]="newAgencyName"
-                class="w-full mt-1 px-3 py-2.5 bg-cream/50 rounded-[14px]
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
                        text-sm text-petrol placeholder:text-stone/30
                        border border-warm-border focus:border-earth
                        focus:outline-none transition-colors" />
             </div>
             <div>
               <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Dirección</label>
-              <input type="text" placeholder="Dirección de la agencia"
-                [(ngModel)]="newAgencyDireccion"
-                class="w-full mt-1 px-3 py-2.5 bg-cream/50 rounded-[14px]
-                       text-sm text-petrol placeholder:text-stone/30
-                       border border-warm-border focus:border-earth
-                       focus:outline-none transition-colors" />
+              <div class="mt-1">
+                <app-address-autocomplete placeholder="Buscar dirección..."
+                  (addressSelected)="onAddressSelected($event)"></app-address-autocomplete>
+              </div>
             </div>
             <div>
               <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Tipo de relación</label>
@@ -232,7 +433,7 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
               <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Notas</label>
               <textarea placeholder="Notas sobre la agencia..." rows="3"
                 [(ngModel)]="newAgencyNotas"
-                class="w-full mt-1 px-3 py-2.5 bg-cream/50 rounded-[14px]
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
                        text-sm text-petrol placeholder:text-stone/30
                        border border-warm-border focus:border-earth
                        focus:outline-none transition-colors resize-none">
@@ -258,18 +459,167 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
     .animate-slide-up {
       animation: slide-up 0.3s ease-out;
     }
+    .map-container {
+      overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.3s ease, margin-top 0.3s ease;
+    }
+    .map-container-open {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: 0;
+    }
+    .map-container-closed {
+      max-height: 0;
+      opacity: 0;
+      margin-top: -20px;
+    }
   `]
 })
 export class AgenciesPage {
   private propertyService = inject(PropertyService);
 
   readonly agencies = this.propertyService.agencies;
-  readonly agenciasAlerta = this.propertyService.agenciasAlerta;
+
+  agenciesConCoords = computed(() =>
+    this.agencies().filter(a => a.lat != null && a.lng != null)
+  );
+
+  // Map toggle
+  showMap = signal(true);
+
+  // Search & Filters
+  searchTerm = signal('');
+  filtroRelacion = signal('todas');
+  filtroEstrellas = signal(0);
+  filtroOrden = signal('nombre');
+  filtroCiudad = signal('todas');
+  pageSize = signal(5);
+  currentPage = signal(1);
+
+  filtroRelacionChips = [
+    { key: 'todas', label: 'Todas' },
+    { key: 'partner-preferente', label: 'Partner' },
+    { key: 'solo-captacion', label: 'Captación' },
+    { key: 'ocasional', label: 'Ocasional' },
+    { key: 'nueva', label: 'Nueva' },
+  ];
+
+  ordenOptions = [
+    { key: 'nombre', label: 'Nombre' },
+    { key: 'reciente', label: 'Más reciente' },
+    { key: 'antiguo', label: 'Más antiguo' },
+    { key: 'estrellas', label: 'Más estrellas' },
+  ];
+
+  ordenLabels = this.ordenOptions.map(o => o.label);
+
+  ciudadesDisponibles = computed(() => {
+    const direcciones = this.agencies().map(a => a.direccion).filter((d): d is string => !!d);
+    const ciudades = new Set<string>();
+    for (const dir of direcciones) {
+      const parts = dir.split(',');
+      const ciudad = parts[parts.length - 1]?.trim();
+      if (ciudad) ciudades.add(ciudad);
+    }
+    return Array.from(ciudades).sort();
+  });
+
+  hasActiveFilters = computed(() =>
+    this.filtroRelacion() !== 'todas' ||
+    this.filtroEstrellas() !== 0 ||
+    this.filtroOrden() !== 'nombre' ||
+    this.filtroCiudad() !== 'todas'
+  );
+
+  filteredAgencies = computed(() => {
+    let result = this.agencies();
+
+    const term = this.searchTerm().toLowerCase().trim();
+    if (term) {
+      result = result.filter(a =>
+        a.nombre.toLowerCase().includes(term) ||
+        (a.direccion && a.direccion.toLowerCase().includes(term))
+      );
+    }
+
+    const relacion = this.filtroRelacion();
+    if (relacion !== 'todas') {
+      result = result.filter(a => a.tipoRelacion === relacion);
+    }
+
+    const estrellas = this.filtroEstrellas();
+    if (estrellas > 0) {
+      result = result.filter(a => a.relacion >= estrellas);
+    }
+
+    const ciudad = this.filtroCiudad();
+    if (ciudad !== 'todas') {
+      result = result.filter(a => {
+        if (!a.direccion) return false;
+        const parts = a.direccion.split(',');
+        const agencyCity = parts[parts.length - 1]?.trim();
+        return agencyCity === ciudad;
+      });
+    }
+
+    const orden = this.filtroOrden();
+    if (orden === 'reciente') {
+      result = [...result].sort((a, b) => {
+        const da = a.lastContactDate ? new Date(a.lastContactDate).getTime() : 0;
+        const db = b.lastContactDate ? new Date(b.lastContactDate).getTime() : 0;
+        return db - da;
+      });
+    } else if (orden === 'antiguo') {
+      result = [...result].sort((a, b) => {
+        const da = a.lastContactDate ? new Date(a.lastContactDate).getTime() : Infinity;
+        const db = b.lastContactDate ? new Date(b.lastContactDate).getTime() : Infinity;
+        return da - db;
+      });
+    } else if (orden === 'estrellas') {
+      result = [...result].sort((a, b) => b.relacion - a.relacion);
+    }
+
+    return result;
+  });
+
+  totalPages = computed(() => Math.max(1, Math.ceil(this.filteredAgencies().length / this.pageSize())));
+
+  paginatedAgencies = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.filteredAgencies().slice(start, start + this.pageSize());
+  });
+
+  pageNumbers = computed(() => {
+    const total = this.totalPages();
+    const current = this.currentPage();
+    const pages: number[] = [];
+
+    if (total <= 5) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      const start = Math.max(2, current - 1);
+      const end = Math.min(total - 1, current + 1);
+      if (start > 2) pages.push(-1); // ellipsis
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (end < total - 1) pages.push(-1); // ellipsis
+      pages.push(total);
+    }
+    return pages;
+  });
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages()) return;
+    this.currentPage.set(page);
+  }
 
   // Modal state
   showAddModal = signal(false);
+  showFilterModal = signal(false);
   newAgencyName = '';
   newAgencyDireccion = '';
+  newAgencyLat = signal<number | undefined>(undefined);
+  newAgencyLng = signal<number | undefined>(undefined);
   newAgencyTipo = signal<string | null>(null);
   newAgencyRelacion = signal(3);
   newAgencyNotas = '';
@@ -285,6 +635,16 @@ export class AgenciesPage {
   iconMap = MapPin;
   iconPlus = Plus;
   iconX = X;
+  iconSearch = Search;
+  iconFilter = SlidersHorizontal;
+  iconChevronDown = ChevronDown;
+  iconChevronUp = ChevronUp;
+
+  onAddressSelected(result: { address: string; lat: number; lng: number }): void {
+    this.newAgencyDireccion = result.address;
+    this.newAgencyLat.set(result.lat);
+    this.newAgencyLng.set(result.lng);
+  }
 
   getTipoRelacionLabel(tipo: string): string {
     const map: Record<string, string> = {
@@ -306,6 +666,36 @@ export class AgenciesPage {
     return map[tipo] || 'bg-cream text-stone';
   }
 
+  getRelacionLabel(key: string): string {
+    const chip = this.filtroRelacionChips.find(c => c.key === key);
+    return chip?.label ?? key;
+  }
+
+  getOrdenLabel(key: string): string {
+    const opt = this.ordenOptions.find(o => o.key === key);
+    return opt?.label ?? key;
+  }
+
+  onOrdenSelected(label: string): void {
+    const opt = this.ordenOptions.find(o => o.label === label);
+    if (opt) this.filtroOrden.set(opt.key);
+  }
+
+  onPageSizeChange(val: string): void {
+    const size = parseInt(val, 10);
+    if (!isNaN(size)) {
+      this.pageSize.set(size);
+      this.currentPage.set(1);
+    }
+  }
+
+  clearFilters(): void {
+    this.filtroRelacion.set('todas');
+    this.filtroEstrellas.set(0);
+    this.filtroOrden.set('nombre');
+    this.filtroCiudad.set('todas');
+  }
+
   addAgency(): void {
     if (!this.newAgencyName.trim()) return;
 
@@ -322,12 +712,15 @@ export class AgenciesPage {
       tipoRelacion: (tipoMap[this.newAgencyTipo() || ''] || 'nueva') as any,
       relacion: this.newAgencyRelacion() as 1 | 2 | 3 | 4 | 5,
       agentes: [],
-      notas: this.newAgencyNotas.trim() || undefined
+      notas: this.newAgencyNotas.trim() || undefined,
+      lat: this.newAgencyLat(),
+      lng: this.newAgencyLng()
     });
 
-    // Reset form
     this.newAgencyName = '';
     this.newAgencyDireccion = '';
+    this.newAgencyLat.set(undefined);
+    this.newAgencyLng.set(undefined);
     this.newAgencyTipo.set(null);
     this.newAgencyRelacion.set(3);
     this.newAgencyNotas = '';

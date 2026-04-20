@@ -84,7 +84,7 @@ const DEFAULT_CHECKLIST: ChecklistVisita = {
     LucideAngularModule
   ],
   template: `
-    <div class="px-5 pt-8 pb-32 space-y-6 bg-cream min-h-full max-w-2xl mx-auto overflow-y-auto">
+    <div class="p-4 lg:p-6 space-y-6 bg-cream min-h-full max-w-2xl lg:max-w-5xl mx-auto overflow-y-auto">
 
           <!-- Header -->
           <div class="flex items-center justify-between">
@@ -142,7 +142,7 @@ const DEFAULT_CHECKLIST: ChecklistVisita = {
           </div>
 
           <!-- Summary bar -->
-          <div class="bg-white/70 backdrop-blur-md rounded-[20px] border border-white/40 shadow-sm p-3.5">
+          <div class="bg-white rounded-[20px] border border-warm-border shadow-sm p-3.5">
             <div class="flex items-center justify-between gap-4">
               <div class="flex items-center gap-3 text-[11px]">
                 <div class="flex items-center gap-1">
@@ -166,7 +166,7 @@ const DEFAULT_CHECKLIST: ChecklistVisita = {
           </div>
 
           <!-- Checklist Accordion Sections -->
-          <div class="space-y-3">
+          <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
             @for (sectionKey of sectionKeys; track sectionKey) {
               <app-checklist-group
                 [section]="checklist()[sectionKey]"
@@ -177,13 +177,13 @@ const DEFAULT_CHECKLIST: ChecklistVisita = {
           </div>
 
           <!-- Interior visual inputs -->
-          <div class="bg-white/70 backdrop-blur-md rounded-[28px] border border-white/40 shadow-sm p-5">
+          <div class="bg-white rounded-[28px] border border-warm-border shadow-sm p-5">
             <h3 class="text-sm font-semibold text-petrol mb-4">Datos del inmueble</h3>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
               <div>
                 <label class="text-[10px] text-stone font-medium uppercase tracking-wide">m²</label>
                 <input type="number" placeholder="75"
-                  class="w-full mt-1 px-3 py-2.5 bg-cream/50 rounded-[14px]
+                  class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
                          text-sm text-petrol placeholder:text-stone/30
                          border border-warm-border focus:border-earth
                          focus:outline-none transition-colors" />
@@ -238,7 +238,7 @@ const DEFAULT_CHECKLIST: ChecklistVisita = {
           </div>
 
           <!-- Feeling Scale -->
-          <div class="bg-white/70 backdrop-blur-md rounded-[28px] border border-white/40 shadow-sm p-5">
+          <div class="bg-white rounded-[28px] border border-warm-border shadow-sm p-5">
             <div class="flex items-center gap-2 mb-4">
               <lucide-icon [img]="iconHeart" class="text-earth" [size]="16"></lucide-icon>
               <h3 class="text-sm font-semibold text-petrol">Feeling del vendedor</h3>

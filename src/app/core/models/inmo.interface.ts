@@ -17,6 +17,8 @@ export interface Agency {
   lastContactDate?: string;
   agentes: Agent[];
   notas?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export type AgencyTipoRelacion = 'partner-preferente' | 'solo-captacion' | 'ocasional' | 'nueva';
@@ -163,9 +165,12 @@ export interface PropertyMetrics {
 // ============================================
 // CONTACTOS
 // ============================================
+export type ContactTipo = 'fontanero' | 'constructor' | 'abogado' | 'portero' | 'notario' | 'electricista' | 'pintor' | 'arquitecto' | 'gestor' | 'otro';
+
 export interface Contact {
   id: string;
   nombre: string;
+  tipo?: ContactTipo;
   telefono?: string;
   email?: string;
   whatsapp?: string;

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal, HostListener, ElementRef, inject, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, HostListener, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ChevronDown } from 'lucide-angular';
 
@@ -25,11 +25,13 @@ import { LucideAngularModule, ChevronDown } from 'lucide-angular';
     </div>
 
     @if (isOpen()) {
-      <div class="fixed bg-white rounded-[14px] border border-warm-border shadow-xl overflow-hidden"
+      <div class="fixed bg-white rounded-[14px] border border-warm-border shadow-xl overflow-hidden
+                  max-h-[240px] overflow-y-auto"
            [style.top.px]="panelTop()"
+           [style.bottom.px]="panelBottom()"
            [style.left.px]="panelLeft()"
            [style.width.px]="panelWidth()"
-           [style.zIndex]="9999">
+           [style.zIndex]="10500">
         @for (option of options; track option) {
           <button
             type="button"
@@ -50,7 +52,7 @@ import { LucideAngularModule, ChevronDown } from 'lucide-angular';
     }
   `]
 })
-export class AppDropdownComponent implements AfterViewInit {
+export class AppDropdownComponent {
   private el = inject(ElementRef);
 
   @Input() options: string[] = [];
@@ -60,23 +62,31 @@ export class AppDropdownComponent implements AfterViewInit {
   selectedOption = signal<string | null>(null);
   isOpen = signal(false);
 
-  panelTop = signal(0);
+  panelTop = signal<number | null>(null);
+  panelBottom = signal<number | null>(null);
   panelLeft = signal(0);
   panelWidth = signal(0);
 
   iconChevron = ChevronDown;
 
-  ngAfterViewInit(): void {
-    // Panel position will be calculated on toggle
-  }
-
   private updatePosition(): void {
     const trigger = this.el.nativeElement.querySelector('#triggerEl') || this.el.nativeElement.firstElementChild;
     if (trigger) {
       const rect = trigger.getBoundingClientRect();
-      this.panelTop.set(rect.bottom + 4);
+      const viewportHeight = window.innerHeight;
+      const spaceBelow = viewportHeight - rect.bottom - 4;
+      const estimatedPanelHeight = Math.min(this.options.length * 40, 240);
+
       this.panelLeft.set(rect.left);
       this.panelWidth.set(rect.width);
+
+      if (spaceBelow >= estimatedPanelHeight || spaceBelow >= 120) {
+        this.panelTop.set(rect.bottom + 4);
+        this.panelBottom.set(null);
+      } else {
+        this.panelTop.set(null);
+        this.panelBottom.set(viewportHeight - rect.top + 4);
+      }
     }
   }
 
@@ -96,10 +106,9 @@ export class AppDropdownComponent implements AfterViewInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
     if (!this.el.nativeElement.contains(event.target)) {
-      // Also check if click is on the fixed panel
-      const panel = document.querySelector('.fixed[style*="z-index: 9999"]');
-      if (panel && panel.contains(event.target as Node)) {
-        return; // Don't close - let the option click handler do it
+      const panels = Array.from(document.querySelectorAll('.fixed[style*="z-index"]'));
+      for (const panel of panels) {
+        if (panel.contains(event.target as Node)) return;
       }
       this.isOpen.set(false);
     }
