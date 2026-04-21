@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, signal, afterNextRender, effect } from '@angular/core';
+import { Component, Input, input, OnDestroy, signal, afterNextRender, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type { Agency } from '../../../core/models/inmo.interface';
 import * as L from 'leaflet';
@@ -41,9 +41,11 @@ L.Marker.prototype.options.icon = defaultIcon;
 export class AgencyMapComponent implements OnDestroy {
   @Input({ required: true }) agencies: Agency[] = [];
   @Input() fullHeight = false;
+  focusAgencyId = input<string | null>(null);
 
   private map: L.Map | null = null;
   private markers: L.Marker[] = [];
+  private agencyMarkerMap = new Map<string, L.Marker>();
   private tileLayers: Record<string, L.TileLayer> = {};
   activeLayer = signal('mapa');
   readonly mapId = 'agency-map-' + Math.random().toString(36).substring(2, 9);
@@ -62,6 +64,16 @@ export class AgencyMapComponent implements OnDestroy {
 
     effect(() => {
       this.updateMarkers();
+    });
+
+    effect(() => {
+      const id = this.focusAgencyId();
+      if (!id || !this.map) return;
+      const marker = this.agencyMarkerMap.get(id);
+      if (!marker) return;
+      const latlng = marker.getLatLng();
+      this.map!.flyTo(latlng, 15, { duration: 0.8 });
+      marker.openPopup();
     });
   }
 
@@ -102,6 +114,7 @@ export class AgencyMapComponent implements OnDestroy {
 
     this.markers.forEach(m => m.remove());
     this.markers = [];
+    this.agencyMarkerMap.clear();
 
     const validAgencies = this.agencies.filter(a => a.lat != null && a.lng != null);
     if (validAgencies.length === 0) return;
@@ -120,6 +133,7 @@ export class AgencyMapComponent implements OnDestroy {
         </div>
       `);
       this.markers.push(marker);
+      this.agencyMarkerMap.set(agency.id, marker);
     }
 
     if (bounds.isValid()) {

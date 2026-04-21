@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal, HostListener, ElementRef, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, HostListener, ElementRef, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ChevronDown } from 'lucide-angular';
 
@@ -57,10 +57,19 @@ export class AppDropdownComponent {
 
   @Input() options: string[] = [];
   @Input() placeholder = 'Seleccionar...';
+  @Input() value: string | null = null;
   @Output() selectedChange = new EventEmitter<string>();
 
   selectedOption = signal<string | null>(null);
   isOpen = signal(false);
+
+  constructor() {
+    effect(() => {
+      if (this.value !== undefined) {
+        this.selectedOption.set(this.value);
+      }
+    });
+  }
 
   panelTop = signal<number | null>(null);
   panelBottom = signal<number | null>(null);

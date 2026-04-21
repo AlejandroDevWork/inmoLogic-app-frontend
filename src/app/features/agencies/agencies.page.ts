@@ -5,7 +5,7 @@ import { PropertyService } from '../../core/services/property.service';
 import { AppDropdownComponent } from '../../shared/components/app-dropdown/app-dropdown.component';
 import { AddressAutocompleteComponent } from '../../shared/components/address-autocomplete/address-autocomplete.component';
 import { AgencyMapComponent } from '../../shared/components/agency-map/agency-map.component';
-import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, StickyNote, MapPin, Plus, X, Search, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-angular';
+import { LucideAngularModule, Building2, Phone, Mail, Star, StickyNote, MapPin, Plus, X, Search, SlidersHorizontal, ChevronDown, ChevronUp, Users } from 'lucide-angular';
 
 @Component({
   selector: 'app-agencies',
@@ -48,7 +48,7 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
             <div class="map-container"
                  [class]="showMap() ? 'map-container-open' : 'map-container-closed'">
               <div class="bg-white rounded-[24px] border border-warm-border shadow-sm overflow-hidden">
-                <app-agency-map [agencies]="agenciesConCoords()"></app-agency-map>
+                <app-agency-map [agencies]="agenciesConCoords()" [focusAgencyId]="focusAgencyId()"></app-agency-map>
               </div>
             </div>
           }
@@ -122,8 +122,9 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
             <div class="flex items-center justify-between mb-3">
               <h2 class="text-sm font-semibold text-petrol">Agencias</h2>
               <app-dropdown [options]="pageSizeOptions" [placeholder]="pageSizeLabel()"
+                [value]="pageSizeLabel()"
                 (selectedChange)="onPageSizeChange($event)"
-                class="w-20"></app-dropdown>
+                class="w-24"></app-dropdown>
             </div>
             <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
               @for (agency of paginatedAgencies(); track agency.id) {
@@ -163,15 +164,22 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
                                      text-stone hover:text-petrol transition-colors">
                         <lucide-icon [img]="iconPhone" [size]="14"></lucide-icon>
                       </button>
-                      <button class="w-8 h-8 rounded-[10px] bg-sand/40 flex items-center justify-center
-                                     text-stone hover:text-petrol transition-colors">
-                        <lucide-icon [img]="iconMap" [size]="14"></lucide-icon>
-                      </button>
+                      @if (agency.lat != null && agency.lng != null) {
+                        <button (click)="openMapForAgency(agency.id)"
+                          class="w-8 h-8 rounded-[10px] bg-sand/40 flex items-center justify-center
+                                 text-stone hover:text-petrol transition-colors">
+                          <lucide-icon [img]="iconMap" [size]="14"></lucide-icon>
+                        </button>
+                      }
                     </div>
                   </div>
 
                   @if (agency.agentes && agency.agentes.length > 0) {
-                    <div class="mt-3 pt-3 border-t border-cream space-y-2.5">
+                    <div class="mt-4 pt-3 border-t border-warm-border/60 space-y-2.5">
+                      <div class="flex items-center gap-1.5 mb-1">
+                        <lucide-icon [img]="iconUsers" class="text-stone/40" [size]="12"></lucide-icon>
+                        <span class="text-[10px] font-semibold text-stone/50 uppercase tracking-wider">Contactos</span>
+                      </div>
                       @for (agente of agency.agentes; track agente.id) {
                         <div class="flex items-center gap-2">
                           <div class="w-7 h-7 rounded-full bg-petrol/5 flex items-center justify-center text-[10px] font-bold text-petrol">
@@ -188,7 +196,9 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
                             @if (agente.whatsapp) {
                               <button class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center
                                              text-emerald-600 hover:text-emerald-700 transition-colors">
-                                <lucide-icon [img]="iconWhatsapp" [size]="12"></lucide-icon>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.058 5.335 5.335.057 11.89.057c2.765 0 5.358 1.075 7.317 3.034a10.263 10.263 0 013.034 7.317c-.003 6.558-5.339 11.893-11.893 11.893H.057zm6.597-3.798l.375.223a8.864 8.864 0 004.507 1.228h.003c4.875 0 8.841-3.966 8.843-8.843a8.802 8.802 0 00-2.584-6.259 8.792 8.792 0 00-6.259-2.584c-4.878 0-8.843 3.966-8.845 8.843a8.815 8.815 0 001.362 4.742l.208.332-.889 3.248 3.294-.83zm9.158-4.964c-.072-.12-.264-.192-.552-.272-.185-.061-1.149-.567-1.327-.631-.178-.064-.309-.097-.439.097-.131.194-.506.631-.621.762-.114.131-.229.148-.423.049-.195-.097-1.169-.43-2.229-1.366-.823-.734-1.378-1.639-1.539-1.929-.161-.29-.017-.448.086-.545.093-.09.195-.229.293-.343.097-.114.131-.195.196-.34.065-.147.033-.275-.016-.386-.049-.11-.439-1.06-.602-1.45-.161-.39-.325-.337-.439-.343h-.375c-.131 0-.342.049-.522.229-.179.181-.685.669-.685 1.631 0 .963.701 1.895.799 2.025.097.131 1.382 2.109 3.35 2.955.468.202.834.323 1.119.413.47.149.897.128 1.236.078.377-.057 1.149-.469 1.313-.921.163-.453.163-.841.114-.921z"/>
+                                </svg>
                               </button>
                             }
                             @if (agente.email) {
@@ -210,7 +220,7 @@ import { LucideAngularModule, Building2, Phone, Mail, MessageCircle, Star, Stick
                   }
 
                   @if (agency.notas) {
-                    <div class="mt-3 pt-3 border-t border-cream">
+                    <div class="mt-3 pt-3 border-t border-warm-border/60">
                       <div class="flex items-start gap-1.5">
                         <lucide-icon [img]="iconNote" class="text-stone/25 mt-0.5" [size]="11"></lucide-icon>
                         <p class="text-[10px] text-stone/60">{{ agency.notas }}</p>
@@ -479,7 +489,8 @@ export class AgenciesPage {
   );
 
   // Map toggle
-  showMap = signal(true);
+  showMap = signal(false);
+  focusAgencyId = signal<string | null>(null);
 
   // Search & Filters
   searchTerm = signal('');
@@ -626,7 +637,6 @@ export class AgenciesPage {
   iconBuilding2 = Building2;
   iconPhone = Phone;
   iconMail = Mail;
-  iconWhatsapp = MessageCircle;
   iconStar = Star;
   iconNote = StickyNote;
   iconMap = MapPin;
@@ -636,6 +646,13 @@ export class AgenciesPage {
   iconFilter = SlidersHorizontal;
   iconChevronDown = ChevronDown;
   iconChevronUp = ChevronUp;
+  iconUsers = Users;
+
+  openMapForAgency(agencyId: string): void {
+    this.focusAgencyId.set(null);
+    this.showMap.set(true);
+    setTimeout(() => this.focusAgencyId.set(agencyId), 50);
+  }
 
   onAddressSelected(result: { address: string; lat: number; lng: number }): void {
     this.newAgencyDireccion = result.address;

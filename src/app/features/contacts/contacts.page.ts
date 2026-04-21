@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PropertyService } from '../../core/services/property.service';
 import { AppDropdownComponent } from '../../shared/components/app-dropdown/app-dropdown.component';
-import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee, MapPin, Search, SlidersHorizontal } from 'lucide-angular';
+import { LucideAngularModule, Users, Phone, Mail, Plus, X, Coffee, MapPin, Search, SlidersHorizontal, ChevronDown } from 'lucide-angular';
 
 @Component({
   selector: 'app-contacts',
@@ -35,7 +35,7 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
           <lucide-icon [img]="iconSearch" class="absolute left-3 top-1/2 -translate-y-1/2 text-stone/40" [size]="16"></lucide-icon>
           <input type="text" placeholder="Buscar contacto..."
             [value]="searchTerm()"
-            (input)="searchTerm.set($any($event.target).value)"
+            (input)="searchTerm.set($any($event.target).value); currentPage.set(1)"
             class="w-full pl-9 pr-4 py-2.5 bg-white rounded-[14px] text-sm text-petrol
                    placeholder:text-stone/30 border border-warm-border
                    focus:border-earth focus:outline-none transition-colors" />
@@ -54,7 +54,7 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
       @if (hasActiveFilters()) {
         <div class="flex flex-wrap gap-1.5">
           @if (filtroTipo() !== 'todas') {
-            <button (click)="filtroTipo.set('todas')"
+            <button (click)="filtroTipo.set('todas'); currentPage.set(1)"
               class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
                      bg-petrol text-white">
               {{ getTipoLabel(filtroTipo()) }}
@@ -62,7 +62,7 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
             </button>
           }
           @if (filtroDesplazamiento() !== 'todas') {
-            <button (click)="filtroDesplazamiento.set('todas')"
+            <button (click)="filtroDesplazamiento.set('todas'); currentPage.set(1)"
               class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
                      bg-petrol text-white">
               {{ getDesplazamientoLabel(filtroDesplazamiento()) }}
@@ -70,14 +70,14 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
             </button>
           }
           @if (filtroAgencia() !== 'todas') {
-            <button (click)="filtroAgencia.set('todas')"
+            <button (click)="filtroAgencia.set('todas'); currentPage.set(1)"
               class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
                      bg-petrol text-white">
               {{ filtroAgencia() }}
               <lucide-icon [img]="iconX" [size]="10"></lucide-icon>
             </button>
           }
-          <button (click)="clearFilters()"
+          <button (click)="clearFilters(); currentPage.set(1)"
             class="px-2.5 py-1 rounded-[10px] text-[11px] font-medium
                    text-stone hover:text-petrol transition-colors">
             Limpiar todo
@@ -89,10 +89,13 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
       <div>
         <div class="flex items-center justify-between mb-3">
           <h2 class="text-sm font-semibold text-petrol">Contactos</h2>
-          <span class="text-[10px] text-stone">{{ filteredContacts().length }} de {{ contacts().length }}</span>
+          <app-dropdown [options]="pageSizeOptions" [placeholder]="pageSizeLabel()"
+            [value]="pageSizeLabel()"
+            (selectedChange)="onPageSizeChange($event)"
+            class="w-24"></app-dropdown>
         </div>
         <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
-          @for (contact of filteredContacts(); track contact.id) {
+          @for (contact of paginatedContacts(); track contact.id) {
             <div class="bg-white rounded-[28px] border border-warm-border shadow-sm p-4">
               <div class="flex items-start gap-3">
                 <div class="w-11 h-11 rounded-[14px] bg-sand/60 flex items-center justify-center text-petrol text-sm font-bold flex-shrink-0">
@@ -104,11 +107,6 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
                     @if (contact.tipo) {
                       <span class="text-[10px] font-medium px-2 py-0.5 rounded-lg bg-earth-light/25 text-earth-dark">
                         {{ getTipoLabel(contact.tipo) }}
-                      </span>
-                    }
-                    @if (contact.desplazamiento) {
-                      <span class="text-[10px] font-medium px-2 py-0.5 rounded-lg bg-cream text-stone">
-                        {{ getDesplazamientoLabel(contact.desplazamiento) }}
                       </span>
                     }
                   </div>
@@ -147,7 +145,9 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
                   @if (contact.whatsapp) {
                     <button class="w-8 h-8 rounded-[10px] bg-emerald-50 flex items-center justify-center
                                    text-emerald-600 hover:text-emerald-700 transition-colors">
-                      <lucide-icon [img]="iconWhatsapp" [size]="14"></lucide-icon>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.058 5.335 5.335.057 11.89.057c2.765 0 5.358 1.075 7.317 3.034a10.263 10.263 0 013.034 7.317c-.003 6.558-5.339 11.893-11.893 11.893H.057zm6.597-3.798l.375.223a8.864 8.864 0 004.507 1.228h.003c4.875 0 8.841-3.966 8.843-8.843a8.802 8.802 0 00-2.584-6.259 8.792 8.792 0 00-6.259-2.584c-4.878 0-8.843 3.966-8.845 8.843a8.815 8.815 0 001.362 4.742l.208.332-.889 3.248 3.294-.83zm9.158-4.964c-.072-.12-.264-.192-.552-.272-.185-.061-1.149-.567-1.327-.631-.178-.064-.309-.097-.439.097-.131.194-.506.631-.621.762-.114.131-.229.148-.423.049-.195-.097-1.169-.43-2.229-1.366-.823-.734-1.378-1.639-1.539-1.929-.161-.29-.017-.448.086-.545.093-.09.195-.229.293-.343.097-.114.131-.195.196-.34.065-.147.033-.275-.016-.386-.049-.11-.439-1.06-.602-1.45-.161-.39-.325-.337-.439-.343h-.375c-.131 0-.342.049-.522.229-.179.181-.685.669-.685 1.631 0 .963.701 1.895.799 2.025.097.131 1.382 2.109 3.35 2.955.468.202.834.323 1.119.413.47.149.897.128 1.236.078.377-.057 1.149-.469 1.313-.921.163-.453.163-.841.114-.921z"/>
+                      </svg>
                     </button>
                   }
                   @if (contact.email) {
@@ -169,6 +169,35 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
             </div>
           }
         </div>
+
+        <!-- Pagination -->
+        @if (totalPages() > 1) {
+          <div class="flex items-center justify-center gap-1.5 mt-5">
+            <button (click)="goToPage(currentPage() - 1)"
+              [disabled]="currentPage() === 1"
+              class="w-8 h-8 rounded-[10px] flex items-center justify-center transition-colors
+                     disabled:opacity-30 disabled:cursor-default
+                     bg-white border border-warm-border text-stone hover:text-petrol">
+              <lucide-icon [img]="iconChevronDown" [size]="14" class="rotate-90"></lucide-icon>
+            </button>
+            @for (page of pageNumbers(); track page) {
+              <button (click)="goToPage(page)"
+                class="w-8 h-8 rounded-[10px] flex items-center justify-center text-xs font-medium transition-colors"
+                [class]="page === currentPage()
+                  ? 'bg-petrol text-white'
+                  : 'bg-white border border-warm-border text-stone hover:text-petrol'">
+                {{ page }}
+              </button>
+            }
+            <button (click)="goToPage(currentPage() + 1)"
+              [disabled]="currentPage() === totalPages()"
+              class="w-8 h-8 rounded-[10px] flex items-center justify-center transition-colors
+                     disabled:opacity-30 disabled:cursor-default
+                     bg-white border border-warm-border text-stone hover:text-petrol">
+              <lucide-icon [img]="iconChevronDown" [size]="14" class="-rotate-90"></lucide-icon>
+            </button>
+          </div>
+        }
       </div>
 
     </div>
@@ -198,7 +227,7 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
               <label class="text-xs text-petrol font-semibold mb-2 block">Tipo de contacto</label>
               <div class="flex flex-wrap gap-1.5">
                 @for (chip of filtroTipoChips; track chip.key) {
-                  <button (click)="filtroTipo.set(chip.key)"
+                  <button (click)="filtroTipo.set(chip.key); currentPage.set(1)"
                     class="px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all duration-200"
                     [class]="filtroTipo() === chip.key
                       ? 'bg-petrol text-white'
@@ -214,7 +243,7 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
               <label class="text-xs text-petrol font-semibold mb-2 block">Desplazamiento</label>
               <div class="flex flex-wrap gap-1.5">
                 @for (chip of filtroDesplazamientoChips; track chip.key) {
-                  <button (click)="filtroDesplazamiento.set(chip.key)"
+                  <button (click)="filtroDesplazamiento.set(chip.key); currentPage.set(1)"
                     class="px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all duration-200"
                     [class]="filtroDesplazamiento() === chip.key
                       ? 'bg-petrol text-white'
@@ -236,7 +265,7 @@ import { LucideAngularModule, Users, Phone, Mail, MessageCircle, Plus, X, Coffee
 
             <!-- Actions -->
             <div class="flex gap-2 pt-2">
-              <button (click)="clearFilters()"
+              <button (click)="clearFilters(); currentPage.set(1)"
                 class="flex-1 py-2.5 rounded-[14px] text-sm font-medium border border-warm-border
                        text-stone hover:text-petrol transition-colors">
                 Limpiar filtros
@@ -385,6 +414,11 @@ export class ContactsPage {
   filtroTipo = signal('todas');
   filtroDesplazamiento = signal('todas');
   filtroAgencia = signal('todas');
+  pageSize = signal(5);
+  currentPage = signal(1);
+
+  pageSizeOptions = ['5', '10', '15', '20', '25'];
+  pageSizeLabel = computed(() => String(this.pageSize()));
 
   filtroTipoChips = [
     { key: 'todas', label: 'Todos' },
@@ -453,6 +487,45 @@ export class ContactsPage {
     return result;
   });
 
+  totalPages = computed(() => Math.max(1, Math.ceil(this.filteredContacts().length / this.pageSize())));
+
+  paginatedContacts = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.filteredContacts().slice(start, start + this.pageSize());
+  });
+
+  pageNumbers = computed(() => {
+    const total = this.totalPages();
+    const current = this.currentPage();
+    const pages: number[] = [];
+
+    if (total <= 5) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      const start = Math.max(2, current - 1);
+      const end = Math.min(total - 1, current + 1);
+      if (start > 2) pages.push(-1);
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (end < total - 1) pages.push(-1);
+      pages.push(total);
+    }
+    return pages;
+  });
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages()) return;
+    this.currentPage.set(page);
+  }
+
+  onPageSizeChange(label: string): void {
+    const size = parseInt(label, 10);
+    if (!isNaN(size)) {
+      this.pageSize.set(size);
+      this.currentPage.set(1);
+    }
+  }
+
   agenciaNombres = computed(() => this.agencies().map(a => a.nombre));
 
   agenciaFilterOptions = computed(() => ['Todas', 'Sin agencia', ...this.agencies().map(a => a.nombre)]);
@@ -483,13 +556,13 @@ export class ContactsPage {
   iconUsers = Users;
   iconPhone = Phone;
   iconMail = Mail;
-  iconWhatsapp = MessageCircle;
   iconPlus = Plus;
   iconX = X;
   iconCoffee = Coffee;
   iconBuilding = MapPin;
   iconSearch = Search;
   iconFilter = SlidersHorizontal;
+  iconChevronDown = ChevronDown;
 
   getDesplazamientoLabel(tipo: string): string {
     const map: Record<string, string> = {
