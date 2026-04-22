@@ -1,0 +1,199 @@
+
+    <div class="p-4 lg:p-6 space-y-6 bg-cream min-h-full max-w-2xl lg:max-w-5xl mx-auto overflow-y-auto">
+
+          <!-- Header -->
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <lucide-icon [img]="iconClipboard" class="text-earth" [size]="20"></lucide-icon>
+                <h1 class="text-xl font-bold text-petrol">Visita Pro</h1>
+              </div>
+              <p class="text-xs text-stone">Checklist profesional de evaluación</p>
+            </div>
+
+            <!-- Global progress ring -->
+            <div class="flex items-center gap-3">
+              <div class="text-right">
+                <p class="text-lg font-bold text-petrol">{{ globalProgress() }}%</p>
+                <p class="text-[10px] text-stone">{{ completedItems() }}/{{ totalItems() }}</p>
+              </div>
+              <div class="relative w-12 h-12">
+                <svg class="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
+                  <circle cx="24" cy="24" r="20" fill="none" stroke="#F0EBE3" stroke-width="4" />
+                  <circle cx="24" cy="24" r="20" fill="none" stroke="#D4A373" stroke-width="4"
+                          [attr.stroke-dasharray]="globalCircumference"
+                          [attr.stroke-dashoffset]="globalDashOffset()"
+                          stroke-linecap="round"
+                          class="transition-all duration-700" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <lucide-icon [img]="iconCheck"
+                    [class]="globalProgress() === 100 ? 'text-emerald-500' : 'text-stone/40'"
+                    [size]="18"></lucide-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action bar -->
+          <div class="flex items-center gap-2">
+            <button
+              class="flex items-center gap-2 px-5 py-2.5 bg-petrol text-white rounded-[16px]
+                     text-sm font-medium shadow-sm transition-all duration-200 active:scale-95"
+              (click)="saveChecklist()"
+            >
+              <lucide-icon [img]="iconSave" [size]="16"></lucide-icon>
+              Guardar
+            </button>
+            <button
+              class="flex items-center gap-2 px-4 py-2.5 bg-cream text-stone rounded-[16px]
+                     text-sm font-medium border border-warm-border
+                     transition-all duration-200 active:scale-95"
+              (click)="resetChecklist()"
+            >
+              <lucide-icon [img]="iconReset" [size]="16"></lucide-icon>
+              Limpiar
+            </button>
+          </div>
+
+          <!-- Summary bar -->
+          <div class="bg-white rounded-[20px] border border-warm-border shadow-sm p-3.5">
+            <div class="flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3 text-[11px]">
+                <div class="flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-md bg-emerald-500"></span>
+                  <span class="text-stone">{{ countByEstado('bueno') }} Bueno</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-md bg-amber-400"></span>
+                  <span class="text-stone">{{ countByEstado('regular') }} Regular</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-md bg-red-400"></span>
+                  <span class="text-stone">{{ countByEstado('malo') }} Malo</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-md bg-stone/15"></span>
+                  <span class="text-stone">{{ countByEstado('na') }} N/A</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Checklist Accordion Sections -->
+          <div class="space-y-3 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+            @for (sectionKey of sectionKeys; track sectionKey) {
+              <app-checklist-group
+                [section]="checklist()[sectionKey]"
+                [sectionIcon]="getSectionIcon(sectionKey)"
+                (itemChanged)="onItemChanged(sectionKey, $event)"
+              />
+            }
+          </div>
+
+          <!-- Interior visual inputs -->
+          <div class="bg-white rounded-[28px] border border-warm-border shadow-sm p-5">
+            <h3 class="text-sm font-semibold text-petrol mb-4">Datos del inmueble</h3>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div>
+                <label class="text-[10px] text-stone font-medium uppercase tracking-wide">m²</label>
+                <input type="number" placeholder="75"
+                  class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                         text-sm text-petrol placeholder:text-stone/30
+                         border border-warm-border focus:border-earth
+                         focus:outline-none transition-colors" />
+              </div>
+              <div>
+                <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Habitaciones</label>
+                <div class="flex items-center mt-1 gap-2">
+                  <button (click)="decrementHabitaciones()"
+                    class="w-9 h-9 rounded-[12px] bg-sand/60 flex items-center justify-center text-petrol
+                           transition-all duration-200 active:scale-90 hover:bg-sand">
+                    <lucide-icon [img]="iconMinus" [size]="14"></lucide-icon>
+                  </button>
+                  <span class="w-8 text-center text-sm font-semibold text-petrol">{{ habitaciones() }}</span>
+                  <button (click)="incrementHabitaciones()"
+                    class="w-9 h-9 rounded-[12px] bg-sand/60 flex items-center justify-center text-petrol
+                           transition-all duration-200 active:scale-90 hover:bg-sand">
+                    <lucide-icon [img]="iconPlus" [size]="14"></lucide-icon>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Baños</label>
+                <div class="flex items-center mt-1 gap-2">
+                  <button (click)="decrementBanos()"
+                    class="w-9 h-9 rounded-[12px] bg-sand/60 flex items-center justify-center text-petrol
+                           transition-all duration-200 active:scale-90 hover:bg-sand">
+                    <lucide-icon [img]="iconMinus" [size]="14"></lucide-icon>
+                  </button>
+                  <span class="w-8 text-center text-sm font-semibold text-petrol">{{ banos() }}</span>
+                  <button (click)="incrementBanos()"
+                    class="w-9 h-9 rounded-[12px] bg-sand/60 flex items-center justify-center text-petrol
+                           transition-all duration-200 active:scale-90 hover:bg-sand">
+                    <lucide-icon [img]="iconPlus" [size]="14"></lucide-icon>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Calefacción</label>
+                <div class="mt-1">
+                  <app-dropdown [options]="calefaccionOptions" placeholder="Seleccionar..."
+                    (selectedChange)="calefaccion.set($event)"></app-dropdown>
+                </div>
+              </div>
+              <div class="col-span-2">
+                <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Ascensor</label>
+                <div class="mt-1">
+                  <app-dropdown [options]="ascensorOptions" placeholder="Seleccionar..."
+                    (selectedChange)="ascensor.set($event)"></app-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feeling Scale -->
+          <div class="bg-white rounded-[28px] border border-warm-border shadow-sm p-5">
+            <div class="flex items-center gap-2 mb-4">
+              <lucide-icon [img]="iconHeart" class="text-earth" [size]="16"></lucide-icon>
+              <h3 class="text-sm font-semibold text-petrol">Feeling del vendedor</h3>
+            </div>
+            <p class="text-[11px] text-stone mb-4">¿Qué percepción transmite el vendedor o propietario?</p>
+
+            <div class="flex items-center gap-2">
+              @for (val of [1, 2, 3, 4, 5]; track val) {
+                <button
+                  class="flex-1 flex flex-col items-center gap-1 py-2.5 rounded-[16px]
+                         transition-all duration-300 active:scale-95"
+                  [class]="feeling() === val ? 'bg-earth/15 border-2 border-earth' : 'bg-cream/40 border-2 border-transparent'"
+                  (click)="feeling.set(val)"
+                >
+                  <lucide-icon [img]="iconHeart" [size]="16"
+                    [class]="feeling() === val ? 'text-earth' : 'text-stone/20'">
+                  </lucide-icon>
+                  <span class="text-[10px] font-medium leading-tight"
+                        [class]="feeling() === val ? 'text-earth-dark' : 'text-stone/50'">
+                    {{ feelingLabels[val - 1] }}
+                  </span>
+                </button>
+              }
+            </div>
+
+            @if (feeling() > 0) {
+              <div class="mt-4 pt-3 border-t border-cream text-center">
+                <p class="text-xs text-stone">
+                  @if (feeling() <= 2) {
+                    El vendedor no está motivado, puede haber margen
+                  } @else if (feeling() === 3) {
+                    Postura neutral, negociable
+                  } @else if (feeling() === 4) {
+                    Buen feeling, parece que hay acuerdo
+                  } @else {
+                    Excelente sintonía, muévete rápido
+                  }
+                </p>
+              </div>
+            }
+          </div>
+
+    </div>

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal, HostListener, ElementRef, inject, effect } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, ElementRef, inject, effect, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ChevronDown } from 'lucide-angular';
 
@@ -6,53 +6,10 @@ import { LucideAngularModule, ChevronDown } from 'lucide-angular';
   selector: 'app-dropdown',
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
-  template: `
-    <div class="relative" #triggerEl>
-      <button
-        type="button"
-        (click)="toggle()"
-        class="w-full flex items-center justify-between px-3 py-2.5 bg-cream/50 rounded-[14px]
-               text-sm text-petrol border border-warm-border focus:border-earth
-               focus:outline-none transition-colors">
-        <span [class]="selectedOption() ? 'text-petrol' : 'text-stone/30'">
-          {{ selectedOption() || placeholder }}
-        </span>
-        <lucide-icon [img]="iconChevron" [size]="14"
-          class="text-stone/40 transition-transform duration-200"
-          [class.rotate-180]="isOpen()">
-        </lucide-icon>
-      </button>
-    </div>
-
-    @if (isOpen()) {
-      <div class="fixed bg-white rounded-[14px] border border-warm-border shadow-xl overflow-hidden
-                  max-h-[240px] overflow-y-auto"
-           [style.top.px]="panelTop()"
-           [style.bottom.px]="panelBottom()"
-           [style.left.px]="panelLeft()"
-           [style.width.px]="panelWidth()"
-           [style.zIndex]="10500">
-        @for (option of options; track option) {
-          <button
-            type="button"
-            (click)="select(option)"
-            class="w-full px-3 py-2.5 text-left text-sm transition-colors duration-150 hover:bg-cream/80"
-            [class.bg-sand/50]="selectedOption() === option"
-            [class.text-petrol]="selectedOption() === option"
-            [class.text-stone]="selectedOption() !== option">
-            {{ option }}
-          </button>
-        }
-      </div>
-    }
-  `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  templateUrl: './app-dropdown.component.html',
+  host: { style: 'display: block' }
 })
-export class AppDropdownComponent {
+export class AppDropdownComponent implements OnDestroy {
   private el = inject(ElementRef);
 
   @Input() options: string[] = [];
@@ -63,12 +20,23 @@ export class AppDropdownComponent {
   selectedOption = signal<string | null>(null);
   isOpen = signal(false);
 
+  // Capture-phase listener so stopPropagation in other components (e.g. modals) doesn't block us
+  private handleDocumentClick = (event: Event): void => {
+    this.onDocumentClick(event);
+  };
+
   constructor() {
+    document.addEventListener('click', this.handleDocumentClick, true);
+
     effect(() => {
       if (this.value !== undefined) {
         this.selectedOption.set(this.value);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.handleDocumentClick, true);
   }
 
   panelTop = signal<number | null>(null);
@@ -112,14 +80,14 @@ export class AppDropdownComponent {
     this.isOpen.set(false);
   }
 
-  @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
-    if (!this.el.nativeElement.contains(event.target)) {
-      const panels = Array.from(document.querySelectorAll('.fixed[style*="z-index"]'));
-      for (const panel of panels) {
-        if (panel.contains(event.target as Node)) return;
-      }
-      this.isOpen.set(false);
+    if (!this.isOpen()) return;
+    if (this.el.nativeElement.contains(event.target)) return;
+    // Also check if the click is inside our own fixed-position panel
+    const panels = Array.from(document.querySelectorAll('.fixed[style*="z-index"]'));
+    for (const panel of panels) {
+      if (panel.contains(event.target as Node)) return;
     }
+    this.isOpen.set(false);
   }
 }

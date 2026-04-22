@@ -6,31 +6,8 @@ import { PropertyEstado, PropertyTag } from '../../../core/models/inmo.interface
   selector: 'app-status-badge',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    @switch (type) {
-      @case ('estado') {
-        <span [class]="estadoClasses" [class]="baseClasses">
-          {{ estadoLabel }}
-        </span>
-      }
-      @case ('tag') {
-        <span [class]="tagClasses" [class]="baseClasses">
-          {{ tagLabel }}
-        </span>
-      }
-      @case ('crm') {
-        <span [class]="crmClasses" [class]="baseClasses">
-          <span class="w-1.5 h-1.5 rounded-full" [class]="crmDotClass"></span>
-          {{ crmLabel }}
-        </span>
-      }
-    }
-  `,
-  styles: [`
-    :host {
-      display: inline-block;
-    }
-  `]
+  templateUrl: './status-badge.component.html',
+  host: { style: 'display: inline-block' }
 })
 export class StatusBadgeComponent {
   @Input() type: 'estado' | 'tag' | 'crm' = 'estado';

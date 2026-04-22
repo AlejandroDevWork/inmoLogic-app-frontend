@@ -1,0 +1,302 @@
+    <div class="p-4 lg:p-6 space-y-6 bg-cream min-h-full overflow-y-auto">
+
+          <!-- Header -->
+          <div class="flex items-center justify-between">
+            <h1 class="text-xl font-bold text-petrol">Propiedades</h1>
+            <button (click)="showAddModal.set(true)"
+              class="w-10 h-10 rounded-[14px] bg-earth flex items-center justify-center
+                 shadow-sm transition-all duration-200 active:scale-95">
+              <lucide-icon [img]="iconPlus" class="text-white" [size]="16"></lucide-icon>
+            </button>
+          </div>
+
+          <!-- Search bar -->
+          <div class="relative">
+            <lucide-icon [img]="iconSearch" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone/50" [size]="16"></lucide-icon>
+            <input
+              type="text"
+              placeholder="Buscar por dirección o zona..."
+              (input)="onSearch($event)"
+              class="w-full pl-10 pr-4 py-3 bg-white rounded-[16px] border border-warm-border shadow-sm
+                     text-sm text-petrol placeholder:text-stone/40
+                     focus:border-earth focus:outline-none transition-colors duration-200"
+            />
+          </div>
+
+          <!-- Filter chips -->
+          <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+            @for (estado of estados; track estado.key) {
+              <button
+                (click)="filtroActual = estado.key"
+                class="px-3.5 py-2 rounded-[14px] text-xs font-medium whitespace-nowrap
+                       transition-all duration-200"
+                [class]="filtroActual === estado.key
+                  ? 'bg-petrol text-white'
+                  : 'bg-white text-stone border border-warm-border'"
+              >
+                {{ estado.nombre }}
+                <span class="ml-1 opacity-60">({{ getCountByEstado(estado.key) }})</span>
+              </button>
+            }
+          </div>
+
+          <!-- Grid de propiedades -->
+          @if (filteredProperties().length === 0) {
+            <div class="bg-white rounded-[28px] border border-warm-border shadow-sm p-10 text-center">
+              <div class="w-14 h-14 rounded-[18px] bg-sand/40 mx-auto mb-3 flex items-center justify-center">
+                <lucide-icon [img]="iconBuilding2" class="text-stone/30" [size]="28"></lucide-icon>
+              </div>
+              <p class="text-sm text-petrol font-medium">Sin propiedades</p>
+              <p class="text-xs text-stone mt-1">Añade tu primera oportunidad</p>
+            </div>
+          } @else {
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              @for (propiedad of filteredProperties(); track propiedad.id) {
+                <app-property-card [property]="propiedad"
+                                   (cardClick)="onPropertyClick($event)">
+                </app-property-card>
+              }
+            </div>
+          }
+
+    </div>
+
+    <!-- Add property modal -->
+    @if (showAddModal()) {
+      <div class="fixed inset-0 z-[9999] flex items-end lg:items-center justify-center"
+           (click)="showAddModal.set(false)">
+        <div class="absolute inset-0 bg-petrol/40 backdrop-blur-sm"></div>
+        <div class="relative w-full max-w-lg lg:max-w-2xl bg-white rounded-t-[28px] lg:rounded-[28px] shadow-xl
+                    max-h-[85vh] overflow-y-auto animate-slide-up lg:animate-fade-in"
+             (click)="$event.stopPropagation()">
+          <div class="sticky top-0 bg-white flex items-center justify-between p-5 pb-3 border-b border-cream z-10">
+            <h2 class="text-lg font-bold text-petrol">Nueva propiedad</h2>
+            <button (click)="showAddModal.set(false)"
+              class="w-8 h-8 rounded-[10px] bg-cream/60 flex items-center justify-center text-stone
+                     hover:text-petrol transition-colors">
+              <lucide-icon [img]="iconX" [size]="16"></lucide-icon>
+            </button>
+          </div>
+
+          <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- Dirección -->
+            <div class="lg:col-span-2">
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Dirección</label>
+              <input type="text" placeholder="Calle, número, piso..."
+                [(ngModel)]="newDireccion"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors" />
+            </div>
+            <!-- Zona -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Zona</label>
+              <input type="text" placeholder="Centro, Madrid"
+                [(ngModel)]="newZona"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors" />
+            </div>
+            <!-- Precio -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Precio (€)</label>
+              <div class="flex items-center mt-1">
+                <button type="button" (click)="adjustField('newPrecioPedido', -5000)"
+                  class="w-10 h-10 flex items-center justify-center bg-sand/40 text-stone hover:text-petrol hover:bg-sand/60
+                         rounded-l-[14px] border border-warm-border border-r-0 transition-colors shrink-0">
+                  <lucide-icon [img]="iconMinus" [size]="14"></lucide-icon>
+                </button>
+                <input type="number" placeholder="250000"
+                  [(ngModel)]="newPrecioPedido"
+                  class="w-full h-10 bg-sand/30 text-center text-sm text-petrol placeholder:text-stone/30
+                         border border-warm-border focus:border-earth focus:outline-none transition-colors" />
+                <button type="button" (click)="adjustField('newPrecioPedido', 5000)"
+                  class="w-10 h-10 flex items-center justify-center bg-sand/40 text-stone hover:text-petrol hover:bg-sand/60
+                         rounded-r-[14px] border border-warm-border border-l-0 transition-colors shrink-0">
+                  <lucide-icon [img]="iconPlus" [size]="14"></lucide-icon>
+                </button>
+              </div>
+            </div>
+            <!-- Código Postal -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Código Postal</label>
+              <input type="text" placeholder="28013"
+                [(ngModel)]="newCodigoPostal"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors" />
+            </div>
+            <!-- Superficie -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Superficie (m²)</label>
+              <div class="flex items-center mt-1">
+                <button type="button" (click)="adjustField('newSuperficie', -5)"
+                  class="w-10 h-10 flex items-center justify-center bg-sand/40 text-stone hover:text-petrol hover:bg-sand/60
+                         rounded-l-[14px] border border-warm-border border-r-0 transition-colors shrink-0">
+                  <lucide-icon [img]="iconMinus" [size]="14"></lucide-icon>
+                </button>
+                <input type="number" placeholder="85"
+                  [(ngModel)]="newSuperficie"
+                  class="w-full h-10 bg-sand/30 text-center text-sm text-petrol placeholder:text-stone/30
+                         border border-warm-border focus:border-earth focus:outline-none transition-colors" />
+                <button type="button" (click)="adjustField('newSuperficie', 5)"
+                  class="w-10 h-10 flex items-center justify-center bg-sand/40 text-stone hover:text-petrol hover:bg-sand/60
+                         rounded-r-[14px] border border-warm-border border-l-0 transition-colors shrink-0">
+                  <lucide-icon [img]="iconPlus" [size]="14"></lucide-icon>
+                </button>
+              </div>
+            </div>
+            <!-- Habitaciones -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Habitaciones</label>
+              <div class="flex items-center mt-1">
+                <button type="button" (click)="adjustField('newHabitaciones', -1)"
+                  class="w-10 h-10 flex items-center justify-center bg-sand/40 text-stone hover:text-petrol hover:bg-sand/60
+                         rounded-l-[14px] border border-warm-border border-r-0 transition-colors shrink-0">
+                  <lucide-icon [img]="iconMinus" [size]="14"></lucide-icon>
+                </button>
+                <input type="number" placeholder="3"
+                  [(ngModel)]="newHabitaciones"
+                  class="w-full h-10 bg-sand/30 text-center text-sm text-petrol placeholder:text-stone/30
+                         border border-warm-border focus:border-earth focus:outline-none transition-colors" />
+                <button type="button" (click)="adjustField('newHabitaciones', 1)"
+                  class="w-10 h-10 flex items-center justify-center bg-sand/40 text-stone hover:text-petrol hover:bg-sand/60
+                         rounded-r-[14px] border border-warm-border border-l-0 transition-colors shrink-0">
+                  <lucide-icon [img]="iconPlus" [size]="14"></lucide-icon>
+                </button>
+              </div>
+            </div>
+            <!-- Baños -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Baños</label>
+              <div class="flex items-center mt-1">
+                <button type="button" (click)="adjustField('newBanos', -1)"
+                  class="w-10 h-10 flex items-center justify-center bg-sand/40 text-stone hover:text-petrol hover:bg-sand/60
+                         rounded-l-[14px] border border-warm-border border-r-0 transition-colors shrink-0">
+                  <lucide-icon [img]="iconMinus" [size]="14"></lucide-icon>
+                </button>
+                <input type="number" placeholder="1"
+                  [(ngModel)]="newBanos"
+                  class="w-full h-10 bg-sand/30 text-center text-sm text-petrol placeholder:text-stone/30
+                         border border-warm-border focus:border-earth focus:outline-none transition-colors" />
+                <button type="button" (click)="adjustField('newBanos', 1)"
+                  class="w-10 h-10 flex items-center justify-center bg-sand/40 text-stone hover:text-petrol hover:bg-sand/60
+                         rounded-r-[14px] border border-warm-border border-l-0 transition-colors shrink-0">
+                  <lucide-icon [img]="iconPlus" [size]="14"></lucide-icon>
+                </button>
+              </div>
+            </div>
+            <!-- Planta -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Planta</label>
+              <input type="text" placeholder="3ª"
+                [(ngModel)]="newPlanta"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors" />
+            </div>
+            <!-- Año construcción -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Año construcción</label>
+              <div class="flex items-center mt-1">
+                <button type="button" (click)="adjustField('newAnoConstruccion', -1, 1800)"
+                  class="w-10 h-10 flex items-center justify-center bg-sand/40 text-stone hover:text-petrol hover:bg-sand/60
+                         rounded-l-[14px] border border-warm-border border-r-0 transition-colors shrink-0">
+                  <lucide-icon [img]="iconMinus" [size]="14"></lucide-icon>
+                </button>
+                <input type="number" placeholder="1965"
+                  [(ngModel)]="newAnoConstruccion"
+                  class="w-full h-10 bg-sand/30 text-center text-sm text-petrol placeholder:text-stone/30
+                         border border-warm-border focus:border-earth focus:outline-none transition-colors" />
+                <button type="button" (click)="adjustField('newAnoConstruccion', 1, 1800)"
+                  class="w-10 h-10 flex items-center justify-center bg-sand/40 text-stone hover:text-petrol hover:bg-sand/60
+                         rounded-r-[14px] border border-warm-border border-l-0 transition-colors shrink-0">
+                  <lucide-icon [img]="iconPlus" [size]="14"></lucide-icon>
+                </button>
+              </div>
+            </div>
+            <!-- Ascensor -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide mb-2 block">Ascensor</label>
+              <div class="flex gap-2">
+                <button type="button" (click)="newAscensor.set(true)"
+                  [class]="newAscensor() ? 'flex-1 py-2 rounded-[12px] text-xs font-medium bg-petrol text-white' : 'flex-1 py-2 rounded-[12px] text-xs font-medium bg-sand/40 text-stone hover:text-petrol transition-colors'">
+                  Sí
+                </button>
+                <button type="button" (click)="newAscensor.set(false)"
+                  [class]="!newAscensor() ? 'flex-1 py-2 rounded-[12px] text-xs font-medium bg-petrol text-white' : 'flex-1 py-2 rounded-[12px] text-xs font-medium bg-sand/40 text-stone hover:text-petrol transition-colors'">
+                  No
+                </button>
+              </div>
+            </div>
+            <!-- Terraza/Balcón -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide mb-2 block">Terraza/Balcón</label>
+              <div class="flex gap-2">
+                <button type="button" (click)="newTerrazaBalcon.set(true)"
+                  [class]="newTerrazaBalcon() ? 'flex-1 py-2 rounded-[12px] text-xs font-medium bg-petrol text-white' : 'flex-1 py-2 rounded-[12px] text-xs font-medium bg-sand/40 text-stone hover:text-petrol transition-colors'">
+                  Sí
+                </button>
+                <button type="button" (click)="newTerrazaBalcon.set(false)"
+                  [class]="!newTerrazaBalcon() ? 'flex-1 py-2 rounded-[12px] text-xs font-medium bg-petrol text-white' : 'flex-1 py-2 rounded-[12px] text-xs font-medium bg-sand/40 text-stone hover:text-petrol transition-colors'">
+                  No
+                </button>
+              </div>
+            </div>
+
+            <!-- Separator -->
+            <div class="lg:col-span-2 border-t border-warm-border/50 my-1"></div>
+
+            <!-- Portal -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Portal</label>
+              <div class="mt-1">
+                <app-dropdown [options]="portalOptions" placeholder="Sin portal"
+                  (selectedChange)="onPortalSelected($event)"></app-dropdown>
+              </div>
+            </div>
+            <!-- Agencia -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Agencia</label>
+              <div class="mt-1">
+                <app-dropdown [options]="agenciaNombres()" placeholder="Sin agencia"
+                  (selectedChange)="onAgenciaSelected($event)"></app-dropdown>
+              </div>
+            </div>
+            <!-- Contacto -->
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Contacto</label>
+              <input type="text" placeholder="Nombre de la persona"
+                [(ngModel)]="newContactoReferencia"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors" />
+            </div>
+            <!-- URL del anuncio -->
+            <div class="lg:col-span-2">
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">URL del anuncio</label>
+              <input type="url" placeholder="https://www.idealista.com/..."
+                [(ngModel)]="newEnlace"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors" />
+            </div>
+
+            <div class="lg:col-span-2">
+              <button (click)="addProperty()"
+                class="w-full py-3 bg-petrol text-white rounded-[16px] text-sm font-medium
+                       shadow-sm transition-all duration-200 active:scale-[0.98]
+                       hover:bg-petrol-light">
+                Guardar propiedad
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }

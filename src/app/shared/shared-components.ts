@@ -7,3 +7,4 @@ export { ChecklistGroupComponent } from './components/checklist-group/checklist-
 export { AppDropdownComponent } from './components/app-dropdown/app-dropdown.component';
 export { AddressAutocompleteComponent } from './components/address-autocomplete/address-autocomplete.component';
 export { AgencyMapComponent } from './components/agency-map/agency-map.component';
+export { AppDataTableComponent, TableColumn } from './components/app-data-table/app-data-table.component';

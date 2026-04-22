@@ -1,0 +1,39 @@
+
+    <div class="relative" #triggerEl>
+      <button
+        type="button"
+        (click)="toggle()"
+        class="w-full flex items-center justify-between px-3 py-2.5 bg-cream/50 rounded-[14px]
+               text-sm text-petrol border border-warm-border focus:border-earth
+               focus:outline-none transition-colors">
+        <span [class]="selectedOption() ? 'text-petrol' : 'text-stone/30'">
+          {{ selectedOption() || placeholder }}
+        </span>
+        <lucide-icon [img]="iconChevron" [size]="14"
+          class="text-stone/40 transition-transform duration-200"
+          [class.rotate-180]="isOpen()">
+        </lucide-icon>
+      </button>
+    </div>
+
+    @if (isOpen()) {
+      <div class="fixed bg-white rounded-[14px] border border-warm-border shadow-xl overflow-hidden
+                  max-h-[240px] overflow-y-auto"
+           [style.top.px]="panelTop()"
+           [style.bottom.px]="panelBottom()"
+           [style.left.px]="panelLeft()"
+           [style.width.px]="panelWidth()"
+           [style.zIndex]="10500">
+        @for (option of options; track option) {
+          <button
+            type="button"
+            (click)="select(option)"
+            class="w-full px-3 py-2.5 text-left text-sm transition-colors duration-150 hover:bg-cream/80"
+            [class.bg-sand/50]="selectedOption() === option"
+            [class.text-petrol]="selectedOption() === option"
+            [class.text-stone]="selectedOption() !== option">
+            {{ option }}
+          </button>
+        }
+      </div>
+    }

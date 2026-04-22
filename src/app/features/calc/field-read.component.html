@@ -1,0 +1,7 @@
+    <div>
+      <label class="block text-[10px] text-stone font-medium uppercase tracking-wide mb-1">{{ label }}</label>
+      <div class="rounded-[12px] px-3 py-2 text-sm font-semibold"
+           [class]="highlight ? 'bg-petrol/10 text-petrol' : 'bg-sand/40 text-petrol'">
+        <span [class]="highlightClass || ''">{{ value }}</span>
+      </div>
+    </div>

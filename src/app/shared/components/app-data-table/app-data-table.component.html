@@ -1,0 +1,24 @@
+@if (hasData) {
+  <div class="bg-white rounded-[16px] border border-warm-border shadow-sm overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-cream/60">
+          @for (col of columns; track col.label) {
+            <th [class]="headerClass(col, $index)">{{ col.label }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        <ng-content />
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <div class="bg-white rounded-[24px] border border-warm-border shadow-sm p-10 text-center">
+    <div class="w-14 h-14 rounded-[18px] bg-sand/40 mx-auto mb-3 flex items-center justify-center">
+      <lucide-icon [img]="emptyIcon" class="text-stone/30" [size]="28"></lucide-icon>
+    </div>
+    <p class="text-sm text-petrol font-medium">{{ emptyTitle }}</p>
+    <p class="text-xs text-stone mt-1">{{ emptySubtitle }}</p>
+  </div>
+}

@@ -1,0 +1,19 @@
+
+    @switch (type) {
+      @case ('estado') {
+        <span [class]="estadoClasses" [class]="baseClasses">
+          {{ estadoLabel }}
+        </span>
+      }
+      @case ('tag') {
+        <span [class]="tagClasses" [class]="baseClasses">
+          {{ tagLabel }}
+        </span>
+      }
+      @case ('crm') {
+        <span [class]="crmClasses" [class]="baseClasses">
+          <span class="w-1.5 h-1.5 rounded-full" [class]="crmDotClass"></span>
+          {{ crmLabel }}
+        </span>
+      }
+    }

@@ -1,0 +1,60 @@
+
+    <div
+      class="
+        bg-warm-white
+        rounded-2xl
+        border
+        border-warm-border
+        transition-all
+        duration-200
+      "
+      [class.shadow-sm]="shadow === 'sm'"
+      [class.shadow-md]="shadow === 'md'"
+      [class.shadow-lg]="shadow === 'lg'"
+      [class.cursor-pointer]="hoverable"
+      [class.hover:shadow-md]="hoverable"
+      [class.hover:border-earth/30]="hoverable"
+      (mouseenter)="isHovered = true"
+      (mouseleave)="isHovered = false"
+    >
+      <!-- Header Opcional -->
+      @if (title || subtitle) {
+        <div
+          class="
+            border-b
+            border-warm-border
+            px-4
+            py-3
+          "
+          [class.rounded-t-xl]="!title && !subtitle"
+        >
+          @if (title) {
+            <h3
+              class="text-base font-semibold text-petrol"
+              [class.text-earth]="accent"
+            >
+              {{ title }}
+            </h3>
+          }
+          @if (subtitle) {
+            <p class="mt-0.5 text-sm text-stone">{{ subtitle }}</p>
+          }
+        </div>
+      }
+
+      <!-- Contenido -->
+      <div
+        class="
+          [paddingClass]
+        "
+      >
+        <ng-content />
+      </div>
+
+      <!-- Footer Opcional (para acciones) -->
+      @if (showFooter) {
+        <div class="border-t border-warm-border px-4 py-3">
+          <ng-content select="[card-footer]" />
+        </div>
+      }
+    </div>

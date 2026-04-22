@@ -1,89 +1,60 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PropertyService } from '../../core/services/property.service';
 import { PropertyCardComponent } from '../../shared/components/property-card/property-card.component';
-import { LucideAngularModule, Building2, Search, SlidersHorizontal } from 'lucide-angular';
+import { AppDropdownComponent } from '../../shared/components/app-dropdown/app-dropdown.component';
+import { LucideAngularModule, Building2, Search, Plus, X, Minus } from 'lucide-angular';
 
 @Component({
   selector: 'app-properties',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     PropertyCardComponent,
+    AppDropdownComponent,
     LucideAngularModule
   ],
-  template: `
-    <div class="p-4 lg:p-6 space-y-6 bg-cream min-h-full overflow-y-auto">
-
-          <!-- Header -->
-          <div>
-            <h1 class="text-xl font-bold text-petrol">Propiedades</h1>
-          </div>
-
-          <!-- Search bar -->
-          <div class="relative">
-            <lucide-icon [img]="iconSearch" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone/50" [size]="16"></lucide-icon>
-            <input
-              type="text"
-              placeholder="Buscar por dirección o zona..."
-              (input)="onSearch($event)"
-              class="w-full pl-10 pr-4 py-3 bg-white rounded-[16px] border border-warm-border shadow-sm
-                     text-sm text-petrol placeholder:text-stone/40
-                     focus:border-earth focus:outline-none transition-colors duration-200"
-            />
-          </div>
-
-          <!-- Filter chips -->
-          <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
-            @for (estado of estados; track estado.key) {
-              <button
-                (click)="filtroActual = estado.key"
-                class="px-3.5 py-2 rounded-[14px] text-xs font-medium whitespace-nowrap
-                       transition-all duration-200"
-                [class]="filtroActual === estado.key
-                  ? 'bg-petrol text-white'
-                  : 'bg-white text-stone border border-warm-border'"
-              >
-                {{ estado.nombre }}
-                <span class="ml-1 opacity-60">({{ getCountByEstado(estado.key) }})</span>
-              </button>
-            }
-          </div>
-
-          <!-- Grid de propiedades -->
-          @if (filteredProperties().length === 0) {
-            <div class="bg-white rounded-[28px] border border-warm-border shadow-sm p-10 text-center">
-              <div class="w-14 h-14 rounded-[18px] bg-sand/40 mx-auto mb-3 flex items-center justify-center">
-                <lucide-icon [img]="iconBuilding2" class="text-stone/30" [size]="28"></lucide-icon>
-              </div>
-              <p class="text-sm text-petrol font-medium">Sin propiedades</p>
-              <p class="text-xs text-stone mt-1">Añade tu primera oportunidad</p>
-            </div>
-          } @else {
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              @for (propiedad of filteredProperties(); track propiedad.id) {
-                <app-property-card [property]="propiedad"
-                                   (cardClick)="onPropertyClick($event)">
-                </app-property-card>
-              }
-            </div>
-          }
-
-    </div>
-  `
+  templateUrl: './properties.page.html',
+  styleUrls: ['./properties.page.scss']
 })
 export class PropertiesPage {
   private propertyService = inject(PropertyService);
   private router = inject(Router);
 
   readonly properties = this.propertyService.properties;
+  readonly agencies = this.propertyService.agencies;
   filtroActual = 'todos';
   searchTerm = '';
 
+  // Add modal
+  showAddModal = signal(false);
+  newDireccion = '';
+  newZona = '';
+  newPrecioPedido: number | null = null;
+  newCodigoPostal = '';
+  newSuperficie: number | null = null;
+  newHabitaciones: number | null = null;
+  newBanos: number | null = null;
+  newPlanta = '';
+  newAnoConstruccion: number | null = null;
+  newAscensor = signal(false);
+  newTerrazaBalcon = signal(false);
+  newPortal = signal<string | null>(null);
+  newEnlace = '';
+  newAgencyId = signal<string | null>(null);
+  newContactoReferencia = '';
+
+  portalOptions = ['Idealista', 'Fotocasa', 'Pisos', 'Habitaclia', 'Otros'];
+  agenciaNombres = computed(() => this.agencies().map(a => a.nombre));
+
   iconBuilding2 = Building2;
   iconSearch = Search;
-  iconFilter = SlidersHorizontal;
+  iconPlus = Plus;
+  iconX = X;
+  iconMinus = Minus;
 
   estados = [
     { key: 'todos', nombre: 'Todas' },
@@ -121,5 +92,89 @@ export class PropertiesPage {
 
   onPropertyClick(property: any): void {
     this.router.navigate(['/properties', property.id]);
+  }
+
+  adjustField(field: string, delta: number, min: number = 0): void {
+    const current = (this as any)[field];
+    const val = current != null ? current : 0;
+    (this as any)[field] = Math.max(min, val + delta);
+  }
+
+  onPortalSelected(nombre: string): void {
+    this.newPortal.set(nombre.toLowerCase());
+  }
+
+  onAgenciaSelected(nombre: string): void {
+    const agency = this.agencies().find(a => a.nombre === nombre);
+    this.newAgencyId.set(agency?.id ?? null);
+  }
+
+  addProperty(): void {
+    if (!this.newDireccion.trim() || !this.newZona.trim() || this.newPrecioPedido == null) return;
+
+    const precio = this.newPrecioPedido;
+    const propertyData: any = {};
+    if (this.newCodigoPostal.trim()) propertyData.codigoPostal = this.newCodigoPostal.trim();
+    if (this.newSuperficie != null) propertyData.superficie = this.newSuperficie;
+    if (this.newHabitaciones != null) propertyData.habitaciones = this.newHabitaciones;
+    if (this.newBanos != null) propertyData.banos = this.newBanos;
+    if (this.newPlanta.trim()) propertyData.planta = this.newPlanta.trim();
+    if (this.newAnoConstruccion != null) propertyData.anoConstruccion = this.newAnoConstruccion;
+    if (this.newAscensor()) propertyData.ascensor = true;
+    if (this.newTerrazaBalcon()) propertyData.terrazaBalcon = true;
+
+    const adData: any = {};
+    if (this.newPortal()) adData.portal = this.newPortal() as any;
+    if (this.newEnlace.trim()) adData.enlace = this.newEnlace.trim();
+
+    const newProperty = this.propertyService.addProperty({
+      direccion: this.newDireccion.trim(),
+      zona: this.newZona.trim(),
+      precioPedido: precio,
+      estado: 'analisis',
+      tags: [],
+      financials: {
+        precioCompra: precio,
+        itp: 0,
+        notariaGestoria: 0,
+        reforma: 0,
+        alquilerEstimado: 0,
+        comunidad: 0,
+        ibi: 0,
+        seguro: 0
+      },
+      checklist: {
+        estructura: [],
+        electricidad: [],
+        humedades: [],
+        zonaComun: []
+      },
+      ...(Object.keys(propertyData).length > 0 ? { propertyData } : {}),
+      ...(Object.keys(adData).length > 0 ? { adData } : {}),
+      ...(this.newAgencyId() ? { agencyId: this.newAgencyId()! } : {}),
+      ...(this.newContactoReferencia.trim() ? { contactoReferencia: this.newContactoReferencia.trim() } : {})
+    });
+
+    this.showAddModal.set(false);
+    this.resetForm();
+    this.router.navigate(['/properties', newProperty.id]);
+  }
+
+  private resetForm(): void {
+    this.newDireccion = '';
+    this.newZona = '';
+    this.newPrecioPedido = null;
+    this.newCodigoPostal = '';
+    this.newSuperficie = null;
+    this.newHabitaciones = null;
+    this.newBanos = null;
+    this.newPlanta = '';
+    this.newAnoConstruccion = null;
+    this.newAscensor.set(false);
+    this.newTerrazaBalcon.set(false);
+    this.newPortal.set(null);
+    this.newEnlace = '';
+    this.newAgencyId.set(null);
+    this.newContactoReferencia = '';
   }
 }

@@ -18,25 +18,7 @@ L.Marker.prototype.options.icon = defaultIcon;
   selector: 'app-agency-map',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="relative z-[1]">
-      <!-- Layer switcher -->
-      <div class="absolute top-3 right-3 z-[1000] flex gap-1.5">
-        @for (layer of layers; track layer.key) {
-          <button (click)="switchLayer(layer.key)"
-                  class="px-2.5 py-1.5 rounded-[10px] text-[11px] font-medium
-                         transition-all duration-200 shadow-sm"
-                  [class]="activeLayer() === layer.key
-                    ? 'bg-petrol text-white'
-                    : 'bg-white/90 text-stone border border-warm-border hover:bg-white'">
-            {{ layer.label }}
-          </button>
-        }
-      </div>
-      <div [id]="mapId" class="w-full"
-           [class]="fullHeight ? 'h-full' : 'h-[300px] lg:h-[400px]'"></div>
-    </div>
-  `
+  templateUrl: './agency-map.component.html',
 })
 export class AgencyMapComponent implements OnDestroy {
   @Input({ required: true }) agencies: Agency[] = [];

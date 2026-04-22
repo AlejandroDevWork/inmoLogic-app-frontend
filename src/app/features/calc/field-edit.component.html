@@ -1,0 +1,11 @@
+    <div>
+      <label class="block text-[10px] text-stone font-medium uppercase tracking-wide mb-1">{{ label }}</label>
+      <div class="relative">
+        <input type="number" [value]="value"
+               (input)="onInput($event)"
+               class="w-full bg-sand/30 rounded-[14px] px-3 py-2 text-sm text-petrol border border-warm-border focus:border-earth focus:outline-none focus:ring-1 focus:ring-earth/30 pr-12" />
+        @if (suffix) {
+          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-stone font-medium">{{ suffix }}</span>
+        }
+      </div>
+    </div>

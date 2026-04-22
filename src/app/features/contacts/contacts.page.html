@@ -1,0 +1,452 @@
+
+    <div class="p-4 lg:p-6 space-y-5 bg-cream min-h-full overflow-y-auto">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-bold text-petrol">Contactos</h1>
+        </div>
+        <button (click)="showAddModal.set(true)"
+          class="w-10 h-10 rounded-[14px] bg-earth flex items-center justify-center
+                 shadow-sm transition-all duration-200 active:scale-95">
+          <lucide-icon [img]="iconPlus" class="text-white" [size]="20"></lucide-icon>
+        </button>
+      </div>
+
+      <!-- Search + Filter button -->
+      <div class="flex gap-2">
+        <div class="relative flex-1">
+          <lucide-icon [img]="iconSearch" class="absolute left-3 top-1/2 -translate-y-1/2 text-stone/40" [size]="16"></lucide-icon>
+          <input type="text" placeholder="Buscar contacto..."
+            [value]="searchTerm()"
+            (input)="searchTerm.set($any($event.target).value); currentPage.set(1)"
+            class="w-full pl-9 pr-4 py-2.5 bg-white rounded-[14px] text-sm text-petrol
+                   placeholder:text-stone/30 border border-warm-border
+                   focus:border-earth focus:outline-none transition-colors" />
+        </div>
+        <button (click)="showFilterModal.set(true)"
+          class="w-10 h-10 rounded-[14px] bg-white border border-warm-border flex items-center justify-center
+                 shadow-sm transition-all duration-200 active:scale-95 hover:bg-sand/40 relative">
+          <lucide-icon [img]="iconFilter" class="text-petrol" [size]="18"></lucide-icon>
+          @if (hasActiveFilters()) {
+            <div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-earth"></div>
+          }
+        </button>
+      </div>
+
+      <!-- Active filter pills -->
+      @if (hasActiveFilters()) {
+        <div class="flex flex-wrap gap-1.5">
+          @if (filtroTipo() !== 'todas') {
+            <button (click)="filtroTipo.set('todas'); currentPage.set(1)"
+              class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
+                     bg-petrol text-white">
+              {{ getTipoLabel(filtroTipo()) }}
+              <lucide-icon [img]="iconX" [size]="10"></lucide-icon>
+            </button>
+          }
+          @if (filtroDesplazamiento() !== 'todas') {
+            <button (click)="filtroDesplazamiento.set('todas'); currentPage.set(1)"
+              class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
+                     bg-petrol text-white">
+              {{ getDesplazamientoLabel(filtroDesplazamiento()) }}
+              <lucide-icon [img]="iconX" [size]="10"></lucide-icon>
+            </button>
+          }
+          @if (filtroAgencia() !== 'todas') {
+            <button (click)="filtroAgencia.set('todas'); currentPage.set(1)"
+              class="flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-[11px] font-medium
+                     bg-petrol text-white">
+              {{ filtroAgencia() }}
+              <lucide-icon [img]="iconX" [size]="10"></lucide-icon>
+            </button>
+          }
+          <button (click)="clearFilters(); currentPage.set(1)"
+            class="px-2.5 py-1 rounded-[10px] text-[11px] font-medium
+                   text-stone hover:text-petrol transition-colors">
+            Limpiar todo
+          </button>
+        </div>
+      }
+
+      <!-- Contactos list -->
+      <div>
+        <!-- Cards (mobile) -->
+        <div class="space-y-3 lg:hidden">
+          @for (contact of paginatedContacts(); track contact.id) {
+            <div class="bg-white rounded-[28px] border border-warm-border shadow-sm p-4">
+              <div class="flex items-start gap-3">
+                <div class="w-11 h-11 rounded-[14px] bg-sand/60 flex items-center justify-center text-petrol text-sm font-bold flex-shrink-0">
+                  {{ contact.nombre.charAt(0) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <h3 class="text-sm font-semibold text-petrol truncate">{{ contact.nombre }}</h3>
+                    @if (contact.tipo) {
+                      <span class="text-[10px] font-medium px-2 py-0.5 rounded-lg bg-earth-light/25 text-earth-dark">
+                        {{ getTipoLabel(contact.tipo) }}
+                      </span>
+                    }
+                  </div>
+
+                  <!-- Agencia vinculada -->
+                  @if (contact.agencyId) {
+                    <div class="flex items-center gap-1 mt-0.5">
+                      <lucide-icon [img]="iconBuilding" class="text-stone/50" [size]="11"></lucide-icon>
+                      <p class="text-[11px] text-stone">{{ getAgencyName(contact.agencyId) }}</p>
+                    </div>
+                  }
+
+                  <!-- Notas de café -->
+                  @if (contact.notasCafe) {
+                    <div class="flex items-start gap-1.5 mt-1.5">
+                      <lucide-icon [img]="iconCoffee" class="text-earth/50 mt-0.5" [size]="11"></lucide-icon>
+                      <p class="text-[10px] text-stone/70 italic">{{ contact.notasCafe }}</p>
+                    </div>
+                  }
+
+                  @if (contact.notas) {
+                    <div class="flex items-start gap-1.5 mt-1">
+                      <p class="text-[10px] text-stone/50">{{ contact.notas }}</p>
+                    </div>
+                  }
+                </div>
+
+                <!-- Quick actions -->
+                <div class="flex items-center gap-1.5">
+                  @if (contact.telefono) {
+                    <button class="w-8 h-8 rounded-[10px] bg-sand/40 flex items-center justify-center
+                                   text-stone hover:text-petrol transition-colors">
+                      <lucide-icon [img]="iconPhone" [size]="14"></lucide-icon>
+                    </button>
+                  }
+                  @if (contact.whatsapp) {
+                    <button class="w-8 h-8 rounded-[10px] bg-emerald-50 flex items-center justify-center
+                                   text-emerald-600 hover:text-emerald-700 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.058 5.335 5.335.057 11.89.057c2.765 0 5.358 1.075 7.317 3.034a10.263 10.263 0 013.034 7.317c-.003 6.558-5.339 11.893-11.893 11.893H.057zm6.597-3.798l.375.223a8.864 8.864 0 004.507 1.228h.003c4.875 0 8.841-3.966 8.843-8.843a8.802 8.802 0 00-2.584-6.259 8.792 8.792 0 00-6.259-2.584c-4.878 0-8.843 3.966-8.845 8.843a8.815 8.815 0 001.362 4.742l.208.332-.889 3.248 3.294-.83zm9.158-4.964c-.072-.12-.264-.192-.552-.272-.185-.061-1.149-.567-1.327-.631-.178-.064-.309-.097-.439.097-.131.194-.506.631-.621.762-.114.131-.229.148-.423.049-.195-.097-1.169-.43-2.229-1.366-.823-.734-1.378-1.639-1.539-1.929-.161-.29-.017-.448.086-.545.093-.09.195-.229.293-.343.097-.114.131-.195.196-.34.065-.147.033-.275-.016-.386-.049-.11-.439-1.06-.602-1.45-.161-.39-.325-.337-.439-.343h-.375c-.131 0-.342.049-.522.229-.179.181-.685.669-.685 1.631 0 .963.701 1.895.799 2.025.097.131 1.382 2.109 3.35 2.955.468.202.834.323 1.119.413.47.149.897.128 1.236.078.377-.057 1.149-.469 1.313-.921.163-.453.163-.841.114-.921z"/>
+                      </svg>
+                    </button>
+                  }
+                  @if (contact.email) {
+                    <button class="w-8 h-8 rounded-[10px] bg-sand/40 flex items-center justify-center
+                                   text-stone hover:text-petrol transition-colors">
+                      <lucide-icon [img]="iconMail" [size]="14"></lucide-icon>
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          } @empty {
+            <div class="bg-white rounded-[24px] border border-warm-border shadow-sm p-10 text-center">
+              <div class="w-14 h-14 rounded-[18px] bg-sand/40 mx-auto mb-3 flex items-center justify-center">
+                <lucide-icon [img]="iconUsers" class="text-stone/30" [size]="28"></lucide-icon>
+              </div>
+              <p class="text-sm text-petrol font-medium">Sin contactos</p>
+              <p class="text-xs text-stone mt-1">Añade tu primer contacto</p>
+            </div>
+          }
+        </div>
+
+        <!-- Table (desktop) -->
+        <div class="hidden lg:block">
+          <app-data-table
+            [columns]="contactColumns"
+            [hasData]="paginatedContacts().length > 0"
+            [emptyIcon]="iconUsers"
+            emptyTitle="Sin contactos"
+            emptySubtitle="Añade tu primer contacto">
+            @for (contact of paginatedContacts(); track contact.id) {
+              <tr class="border-t border-warm-border/50 hover:bg-sand/30 transition-colors">
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-[10px] bg-sand/60 flex items-center justify-center text-petrol text-xs font-bold flex-shrink-0">
+                      {{ contact.nombre.charAt(0) }}
+                    </div>
+                    <span class="text-sm font-semibold text-petrol truncate max-w-[180px]">{{ contact.nombre }}</span>
+                  </div>
+                </td>
+                <td class="px-3 py-3 text-center">
+                  @if (contact.tipo) {
+                    <span class="text-[10px] font-medium px-2 py-0.5 rounded-lg bg-earth-light/25 text-earth-dark whitespace-nowrap">
+                      {{ getTipoLabel(contact.tipo) }}
+                    </span>
+                  } @else {
+                    <span class="text-xs text-stone/40">—</span>
+                  }
+                </td>
+                <td class="px-3 py-3">
+                  @if (contact.agencyId) {
+                    <span class="text-xs text-stone truncate max-w-[160px] inline-block">{{ getAgencyName(contact.agencyId) }}</span>
+                  } @else {
+                    <span class="text-xs text-stone/40">—</span>
+                  }
+                </td>
+                <td class="px-3 py-3">
+                  @if (contact.notasCafe || contact.notas) {
+                    <span class="text-xs text-stone truncate max-w-[200px] inline-block">{{ contact.notasCafe || contact.notas }}</span>
+                  } @else {
+                    <span class="text-xs text-stone/40">—</span>
+                  }
+                </td>
+                <td class="px-3 py-3">
+                  <div class="flex items-center justify-end gap-1">
+                    @if (contact.telefono) {
+                      <a [href]="'tel:' + contact.telefono"
+                         class="w-7 h-7 rounded-lg bg-sand/40 flex items-center justify-center
+                                text-stone hover:text-petrol transition-colors">
+                        <lucide-icon [img]="iconPhone" [size]="13"></lucide-icon>
+                      </a>
+                    }
+                    @if (contact.whatsapp) {
+                      <a [href]="'https://wa.me/' + cleanPhone(contact.whatsapp)" target="_blank"
+                         class="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center
+                                text-emerald-600 hover:text-emerald-700 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.058 5.335 5.335.057 11.89.057c2.765 0 5.358 1.075 7.317 3.034a10.263 10.263 0 013.034 7.317c-.003 6.558-5.339 11.893-11.893 11.893H.057zm6.597-3.798l.375.223a8.864 8.864 0 004.507 1.228h.003c4.875 0 8.841-3.966 8.843-8.843a8.802 8.802 0 00-2.584-6.259 8.792 8.792 0 00-6.259-2.584c-4.878 0-8.843 3.966-8.845 8.843a8.815 8.815 0 001.362 4.742l.208.332-.889 3.248 3.294-.83zm9.158-4.964c-.072-.12-.264-.192-.552-.272-.185-.061-1.149-.567-1.327-.631-.178-.064-.309-.097-.439.097-.131.194-.506.631-.621.762-.114.131-.229.148-.423.049-.195-.097-1.169-.43-2.229-1.366-.823-.734-1.378-1.639-1.539-1.929-.161-.29-.017-.448.086-.545.093-.09.195-.229.293-.343.097-.114.131-.195.196-.34.065-.147.033-.275-.016-.386-.049-.11-.439-1.06-.602-1.45-.161-.39-.325-.337-.439-.343h-.375c-.131 0-.342.049-.522.229-.179.181-.685.669-.685 1.631 0 .963.701 1.895.799 2.025.097.131 1.382 2.109 3.35 2.955.468.202.834.323 1.119.413.47.149.897.128 1.236.078.377-.057 1.149-.469 1.313-.921.163-.453.163-.841.114-.921z"/>
+                        </svg>
+                      </a>
+                    }
+                    @if (contact.email) {
+                      <a [href]="'mailto:' + contact.email"
+                         class="w-7 h-7 rounded-lg bg-sand/40 flex items-center justify-center
+                                text-stone hover:text-petrol transition-colors">
+                        <lucide-icon [img]="iconMail" [size]="13"></lucide-icon>
+                      </a>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </app-data-table>
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages() > 1) {
+          <div class="flex items-center justify-center gap-1.5 mt-5">
+            <button (click)="goToPage(currentPage() - 1)"
+              [disabled]="currentPage() === 1"
+              class="w-8 h-8 rounded-[10px] flex items-center justify-center transition-colors
+                     disabled:opacity-30 disabled:cursor-default
+                     bg-white border border-warm-border text-stone hover:text-petrol">
+              <lucide-icon [img]="iconChevronDown" [size]="14" class="rotate-90"></lucide-icon>
+            </button>
+            @for (page of pageNumbers(); track page) {
+              <button (click)="goToPage(page)"
+                class="w-8 h-8 rounded-[10px] flex items-center justify-center text-xs font-medium transition-colors"
+                [class]="page === currentPage()
+                  ? 'bg-petrol text-white'
+                  : 'bg-white border border-warm-border text-stone hover:text-petrol'">
+                {{ page }}
+              </button>
+            }
+            <button (click)="goToPage(currentPage() + 1)"
+              [disabled]="currentPage() === totalPages()"
+              class="w-8 h-8 rounded-[10px] flex items-center justify-center transition-colors
+                     disabled:opacity-30 disabled:cursor-default
+                     bg-white border border-warm-border text-stone hover:text-petrol">
+              <lucide-icon [img]="iconChevronDown" [size]="14" class="-rotate-90"></lucide-icon>
+            </button>
+          </div>
+        }
+      </div>
+
+    </div>
+
+    <!-- Filter Panel -->
+    <div class="fixed inset-0 z-50"
+         [class]="showFilterModal() ? 'pointer-events-auto' : 'pointer-events-none'">
+      <div class="absolute inset-0 bg-petrol/30 lg:bg-petrol/15 backdrop-blur-[2px] transition-opacity duration-300"
+           [class]="showFilterModal() ? 'opacity-100' : 'opacity-0'"
+           (click)="showFilterModal.set(false)"></div>
+      <div class="filter-panel"
+           [class.filter-panel-open]="showFilterModal()">
+        <div class="flex items-center justify-between p-5 pb-3 border-b border-cream">
+          <div class="flex items-center gap-2">
+            <lucide-icon [img]="iconFilter" class="text-petrol" [size]="18"></lucide-icon>
+            <h2 class="text-lg font-bold text-petrol">Filtros</h2>
+          </div>
+          <button (click)="showFilterModal.set(false)"
+            class="w-8 h-8 rounded-[10px] bg-cream/60 flex items-center justify-center text-stone hover:text-petrol transition-colors">
+            <lucide-icon [img]="iconX" [size]="16"></lucide-icon>
+          </button>
+        </div>
+
+        <div class="p-5 space-y-5">
+          <!-- Tipo -->
+          <div>
+            <label class="text-xs text-petrol font-semibold mb-2 block">Tipo de contacto</label>
+            <div class="flex flex-wrap gap-1.5">
+              @for (chip of filtroTipoChips; track chip.key) {
+                <button (click)="filtroTipo.set(chip.key); currentPage.set(1)"
+                  class="px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all duration-200"
+                  [class]="filtroTipo() === chip.key
+                    ? 'bg-petrol text-white'
+                    : 'bg-white text-petrol border border-warm-border hover:bg-sand/40'">
+                  {{ chip.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Desplazamiento -->
+          <div>
+            <label class="text-xs text-petrol font-semibold mb-2 block">Desplazamiento</label>
+            <div class="flex flex-wrap gap-1.5">
+              @for (chip of filtroDesplazamientoChips; track chip.key) {
+                <button (click)="filtroDesplazamiento.set(chip.key); currentPage.set(1)"
+                  class="px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all duration-200"
+                  [class]="filtroDesplazamiento() === chip.key
+                    ? 'bg-petrol text-white'
+                    : 'bg-white text-petrol border border-warm-border hover:bg-sand/40'">
+                  {{ chip.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Agencia -->
+          @if (agencies().length > 0) {
+            <div>
+              <label class="text-xs text-petrol font-semibold mb-2 block">Agencia</label>
+              <app-dropdown [options]="agenciaFilterOptions()" [placeholder]="filtroAgenciaLabel()"
+                (selectedChange)="onAgenciaFilterSelected($event)"></app-dropdown>
+            </div>
+          }
+
+          <!-- Elementos por página -->
+          <div>
+            <label class="text-xs text-petrol font-semibold mb-2 block">Elementos por página</label>
+            <app-dropdown [options]="pageSizeOptions" [placeholder]="pageSizeLabel()"
+              [value]="pageSizeLabel()"
+              (selectedChange)="onPageSizeChange($event)"></app-dropdown>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2 pt-2">
+            <button (click)="clearFilters(); currentPage.set(1)"
+              class="flex-1 py-2.5 rounded-[14px] text-sm font-medium border border-warm-border
+                     text-stone hover:text-petrol transition-colors">
+              Limpiar filtros
+            </button>
+            <button (click)="showFilterModal.set(false)"
+              class="flex-1 py-2.5 rounded-[14px] text-sm font-medium bg-petrol text-white
+                     shadow-sm transition-all duration-200 active:scale-[0.98]">
+              Aplicar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Contact Modal -->
+    @if (showAddModal()) {
+      <div class="fixed inset-0 z-[9999] flex items-end lg:items-center justify-center"
+           (click)="showAddModal.set(false)">
+        <div class="absolute inset-0 bg-petrol/40 backdrop-blur-sm"></div>
+        <div class="relative w-full max-w-lg lg:max-w-2xl bg-white rounded-t-[28px] lg:rounded-[28px] shadow-xl
+                    max-h-[85vh] overflow-y-auto animate-slide-up lg:animate-fade-in"
+             (click)="$event.stopPropagation()">
+          <div class="sticky top-0 bg-white flex items-center justify-between p-5 pb-3 border-b border-cream">
+            <h2 class="text-lg font-bold text-petrol">Nuevo contacto</h2>
+            <button (click)="showAddModal.set(false)"
+              class="w-8 h-8 rounded-[10px] bg-cream/60 flex items-center justify-center text-stone hover:text-petrol transition-colors">
+              <lucide-icon [img]="iconX" [size]="16"></lucide-icon>
+            </button>
+          </div>
+
+          <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="lg:col-span-2">
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Nombre</label>
+              <input type="text" placeholder="Nombre del contacto"
+                [(ngModel)]="newNombre"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors" />
+            </div>
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Tipo</label>
+              <div class="mt-1">
+                <app-dropdown [options]="tipoOptions" placeholder="Sin tipo"
+                  (selectedChange)="newTipo.set($event)"></app-dropdown>
+              </div>
+            </div>
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Desplazamiento</label>
+              <div class="mt-1">
+                <app-dropdown [options]="desplazamientoOptions" placeholder="Seleccionar..."
+                  (selectedChange)="newDesplazamiento.set($event)"></app-dropdown>
+              </div>
+            </div>
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Teléfono</label>
+              <input type="tel" placeholder="600 000 000"
+                [(ngModel)]="newTelefono"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors" />
+            </div>
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">WhatsApp</label>
+              <input type="tel" placeholder="600 000 000"
+                [(ngModel)]="newWhatsapp"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors" />
+            </div>
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Email</label>
+              <input type="email" placeholder="email@ejemplo.com"
+                [(ngModel)]="newEmail"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors" />
+            </div>
+            <div>
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Vincular a agencia</label>
+              <div class="mt-1">
+                <app-dropdown [options]="agenciaNombres()" placeholder="Sin agencia"
+                  (selectedChange)="newAgencyId.set($event)"></app-dropdown>
+              </div>
+            </div>
+            <div class="lg:col-span-2">
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide flex items-center gap-1.5">
+                <lucide-icon [img]="iconCoffee" class="text-earth" [size]="12"></lucide-icon>
+                Notas de café
+              </label>
+              <textarea placeholder="Reuniones informales, cafés, contexto personal..."
+                rows="2"
+                [(ngModel)]="newNotasCafe"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors resize-none">
+              </textarea>
+            </div>
+            <div class="lg:col-span-2">
+              <label class="text-[10px] text-stone font-medium uppercase tracking-wide">Notas</label>
+              <textarea placeholder="Notas generales..." rows="2"
+                [(ngModel)]="newNotas"
+                class="w-full mt-1 px-3 py-2.5 bg-sand/30 rounded-[14px]
+                       text-sm text-petrol placeholder:text-stone/30
+                       border border-warm-border focus:border-earth
+                       focus:outline-none transition-colors resize-none">
+              </textarea>
+            </div>
+
+            <div class="lg:col-span-2">
+              <button (click)="addContact()"
+                class="w-full py-3 bg-petrol text-white rounded-[16px] text-sm font-medium
+                       shadow-sm transition-all duration-200 active:scale-[0.98]
+                       hover:bg-petrol-light">
+                Guardar contacto
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }

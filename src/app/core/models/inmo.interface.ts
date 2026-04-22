@@ -73,6 +73,7 @@ export interface Property {
   estado: PropertyEstado;
   tags: PropertyTag[];
   agencyId?: string;
+  contactoReferencia?: string;
   fechaVisita?: string;
   checklist: ChecklistVisita | ChecklistTecnico;
   financials: Financials;
